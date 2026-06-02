@@ -2,27 +2,9 @@ import GameTile from '../GameTile/GameTile.jsx'
 import styles from './HomeScreen.module.css'
 
 const GAMES = [
-  {
-    id: 'generic',
-    name: 'Punkte\nblock',
-    displayName: 'Punkteblock',
-    color: '#7C3AED',
-    bg: 'linear-gradient(145deg, #8B5CF6, #6D28D9)'
-  },
-  {
-    id: 'kniffel',
-    name: 'Kniffel',
-    displayName: 'Kniffel',
-    color: '#DC2626',
-    bg: 'linear-gradient(145deg, #EF4444, #B91C1C)'
-  },
-  {
-    id: 'qwixx',
-    name: 'Qwixx',
-    displayName: 'Qwixx',
-    color: '#0284C7',
-    bg: null // special multicolor
-  }
+  { id: 'generic', displayName: 'Punkteblock', accent: '#F97316' },
+  { id: 'kniffel', displayName: 'Kniffel',     accent: '#EF4444' },
+  { id: 'qwixx',   displayName: 'Qwixx',       accent: '#3B82F6' }
 ]
 
 export default function HomeScreen({ onSelect }) {

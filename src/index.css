@@ -3,25 +3,30 @@
    =========================================================== */
 
 :root {
-  /* Brand / accent */
-  --accent: #6C3CE1;
-  --accent-soft: #9B72E8;
+  /* Brand / accent — warm teal */
+  --accent: #0D9488;
+  --accent-soft: #2DD4BF;
 
-  /* Spielfarben (Qwixx) */
+  /* Game accent colors */
+  --color-generic: #F97316;
+  --color-kniffel: #EF4444;
+  --color-qwixx: #3B82F6;
+
+  /* Spielfarben (Qwixx rows) */
   --qwixx-red: #E8251E;
   --qwixx-yellow: #F5C800;
   --qwixx-green: #2DA44E;
   --qwixx-blue: #0E6EC4;
 
   /* Glass surfaces */
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-bg-strong: rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(200, 180, 240, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.80);
+  --glass-bg-strong: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(0, 0, 0, 0.08);
   --glass-blur: 20px;
 
   /* Text */
-  --text: #1a1a2e;
-  --text-soft: rgba(26, 26, 46, 0.52);
+  --text: #111827;
+  --text-soft: rgba(17, 24, 39, 0.48);
 
   /* Layout */
   --radius-card: 28px;
@@ -34,8 +39,8 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Shadow */
-  --shadow-card: 0 4px 20px rgba(100, 60, 200, 0.10);
-  --shadow-float: 0 10px 36px rgba(100, 60, 200, 0.20);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 8px 32px rgba(0, 0, 0, 0.14);
 
   /* Safe areas */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -44,15 +49,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --accent: #B48FFF;
-    --accent-soft: #C8AAFF;
-    --glass-bg: rgba(38, 32, 60, 0.72);
-    --glass-bg-strong: rgba(48, 40, 75, 0.88);
-    --glass-border: rgba(140, 100, 240, 0.22);
-    --text: #F0EAFF;
-    --text-soft: rgba(240, 234, 255, 0.55);
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-    --shadow-float: 0 10px 40px rgba(0, 0, 0, 0.55);
+    --accent: #2DD4BF;
+    --accent-soft: #5EEAD4;
+    --glass-bg: rgba(30, 35, 45, 0.78);
+    --glass-bg-strong: rgba(38, 44, 58, 0.92);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --text: #F1F5F9;
+    --text-soft: rgba(241, 245, 249, 0.50);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
+    --shadow-float: 0 10px 40px rgba(0, 0, 0, 0.60);
   }
 }
 
@@ -74,11 +79,11 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background: #F4F0FF;
+  background: #F0F4F8;
 }
 
 @media (prefers-color-scheme: dark) {
-  body { background: #16112A; }
+  body { background: #111827; }
 }
 
 button {
@@ -115,12 +120,12 @@ input {
   color: #fff;
   font-size: 17px;
   font-weight: 700;
-  box-shadow: 0 4px 16px rgba(108, 60, 225, 0.35);
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.30);
   transition: transform 0.18s var(--spring), box-shadow 0.18s var(--ease);
 }
 .btn-primary:active {
   transform: scale(0.95);
-  box-shadow: 0 2px 8px rgba(108, 60, 225, 0.3);
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
 }
 
 /* ---- Ghost / outline button ---- */
