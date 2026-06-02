@@ -31,7 +31,7 @@
   border-radius: var(--radius-pill);
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  color: var(--text);
+  color: var(--accent);
   transition: transform 0.2s var(--spring), background 0.2s var(--ease);
 }
 

@@ -2,8 +2,8 @@ import GameTile from '../GameTile/GameTile.jsx'
 import styles from './HomeScreen.module.css'
 
 const GAMES = [
-  { id: 'generic', displayName: 'Punkteblock', accent: '#F97316' },
-  { id: 'kniffel', displayName: 'Kniffel',     accent: '#EF4444' },
+  { id: 'generic', displayName: 'Punkteblock', accent: '#10B981' },
+  { id: 'kniffel', displayName: 'Kniffel',     accent: '#F97316' },
   { id: 'qwixx',   displayName: 'Qwixx',       accent: '#3B82F6' }
 ]
 

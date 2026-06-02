@@ -6,8 +6,8 @@ import styles from './GenericScoreGame.module.css'
 const STORAGE_KEY = 'spieleblock_generic'
 
 const PLAYER_COLORS = [
-  '#6C3CE1', '#FF6B6B', '#0A84FF', '#30D158',
-  '#FF9F0A', '#FF2D92', '#5E5CE6', '#64D2FF'
+  '#10B981', '#38BDF8', '#F472B6', '#FBBF24',
+  '#FB923C', '#4ADE80', '#60A5FA', '#E879F9'
 ]
 
 function emptyState() {

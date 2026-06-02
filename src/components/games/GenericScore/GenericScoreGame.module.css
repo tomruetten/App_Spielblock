@@ -139,7 +139,7 @@
 }
 .cell::-webkit-outer-spin-button,
 .cell::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.cell:focus { background: rgba(108, 60, 225, 0.14); }
+.cell:focus { background: rgba(244, 63, 94, 0.10); }
 
 .addRound {
   width: 100%;
@@ -149,7 +149,7 @@
   font-weight: 600;
   color: var(--accent);
   border-radius: 14px;
-  background: rgba(108, 60, 225, 0.1);
+  background: rgba(244, 63, 94, 0.08);
   transition: transform 0.2s var(--spring);
 }
 .addRound:active { transform: scale(0.97); }
