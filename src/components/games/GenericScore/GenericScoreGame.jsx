@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useMemo, useEffect } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
 import styles from './GenericScoreGame.module.css'
@@ -17,13 +17,11 @@ function emptyState() {
 let nextId = Date.now()
 const makeId = () => `p${nextId++}`
 
-export default function GenericScoreGame({ config, onBack }) {
+export default function GenericScoreGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
-  const [newName, setNewName] = useState('')
-  const [hideAddRow, setHideAddRow] = useState(() => !!(config?.players?.length))
 
   useEffect(() => {
-    if (config?.players && config.players.length > 0 && state.players.length === 0) {
+    if (config?.players?.length && state.players.length === 0) {
       setState({
         players: config.players.map((name, idx) => ({
           id: makeId(),
@@ -44,24 +42,6 @@ export default function GenericScoreGame({ config, onBack }) {
     [players]
   )
   const leaderTotal = totals.length ? Math.max(...totals) : null
-
-  const addPlayer = () => {
-    const name = newName.trim()
-    if (!name) return
-    setState((s) => ({
-      ...s,
-      players: [
-        ...s.players,
-        {
-          id: makeId(),
-          name,
-          color: PLAYER_COLORS[s.players.length % PLAYER_COLORS.length],
-          scores: Array(s.rounds).fill(0)
-        }
-      ]
-    }))
-    setNewName('')
-  }
 
   const removePlayer = (id) =>
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }))
@@ -96,40 +76,17 @@ export default function GenericScoreGame({ config, onBack }) {
     }))
   }
 
-  const reset = () => {
-    if (window.confirm('Neues Spiel starten? Alle Punkte werden gelöscht.')) {
-      setState(emptyState())
-      setHideAddRow(false)
-    }
-  }
-
   return (
     <div className={styles.screen}>
-      <GameHeader title="Punkteblock" onBack={onBack} onReset={reset} />
+      <GameHeader title="Punkteblock" onBack={onBack} onRestart={onRestart} />
 
       <div className={styles.body}>
-        {/* Spieler hinzufügen */}
-        {!hideAddRow && (
-          <div className={`${styles.addRow} glass`}>
-            <input
-              className={styles.input}
-              value={newName}
-              placeholder="Spielername"
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
-            />
-            <button className="btn-primary" onClick={addPlayer}>＋</button>
-          </div>
-        )}
-
         {players.length === 0 ? (
           <div className={styles.empty}>
-            <span className={styles.emptyEmoji}>📝</span>
-            <p>Füge Spieler hinzu, um zu starten.</p>
+            <p>Kein Spiel aktiv.</p>
           </div>
         ) : (
           <>
-            {/* Gesamtsummen */}
             <div className={styles.totalsRow}>
               {players.map((p, i) => (
                 <div key={p.id} className={`${styles.totalCard} glass`}>
@@ -160,7 +117,6 @@ export default function GenericScoreGame({ config, onBack }) {
               ))}
             </div>
 
-            {/* Rundentabelle */}
             <div
               className={`${styles.table} glass`}
               style={{ '--cols': players.length }}
@@ -207,4 +163,3 @@ export default function GenericScoreGame({ config, onBack }) {
     </div>
   )
 }
-

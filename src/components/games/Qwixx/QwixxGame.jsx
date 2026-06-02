@@ -24,17 +24,16 @@ function emptyState() {
   }
 }
 
-export default function QwixxGame({ config, onBack }) {
+export default function QwixxGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
   const [activeIdx, setActiveIdx] = useState(0)
-  const [hideAddRow, setHideAddRow] = useState(() => !!(config?.players?.length))
 
   const players = state.players
   const lockedRows = state.lockedRows
 
   useEffect(() => {
-    if (config?.players && config.players.length > 0 && state.players.length === 0) {
+    if (config?.players?.length && state.players.length === 0) {
       setState({
         players: config.players.map((name) => ({
           id: makeId(),
@@ -105,38 +104,15 @@ export default function QwixxGame({ config, onBack }) {
     }))
   }
 
-  const reset = () => {
-    if (window.confirm('Neues Spiel starten? Alle Kreuze werden gelöscht.')) {
-      setState(emptyState())
-      setActiveIdx(0)
-      setHideAddRow(false)
-    }
-  }
-
   return (
     <div className={styles.screen}>
-      <GameHeader title="Qwixx" onBack={onBack} onReset={reset} />
+      <GameHeader title="Qwixx" onBack={onBack} onRestart={onRestart} />
 
       <div className={styles.body}>
         {players.length === 0 ? (
-          <>
-            {!hideAddRow && (
-              <div className={`${styles.addRow} glass`}>
-                <input
-                  className={styles.input}
-                  value={newName}
-                  placeholder="Spielername"
-                  onChange={(e) => setNewName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
-                />
-                <button className="btn-primary" onClick={addPlayer}>＋</button>
-              </div>
-            )}
-            <div className={styles.empty}>
-              <span className={styles.emptyEmoji}>🎯</span>
-              <p>Füge Spieler hinzu, um zu starten.</p>
-            </div>
-          </>
+          <div className={styles.empty}>
+            <p>Kein Spiel aktiv.</p>
+          </div>
         ) : (
           <>
             {/* Spieler-Tabs */}

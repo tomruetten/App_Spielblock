@@ -11,11 +11,28 @@ const GAMES = {
   qwixx: QwixxGame
 }
 
+const STORAGE_KEYS = {
+  generic: 'spieleblock_generic',
+  kniffel: 'spieleblock_kniffel',
+  qwixx: 'spieleblock_qwixx'
+}
+
+function hasExistingGame(gameType) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS[gameType])
+    if (!raw) return false
+    const data = JSON.parse(raw)
+    return Array.isArray(data?.players) && data.players.length > 0
+  } catch {
+    return false
+  }
+}
+
 export default function App() {
   const [screen, setScreen] = useState('home')
-  const [showSetup, setShowSetup] = useState(false)
-  const [setupGameType, setSetupGameType] = useState(null)
+  const [setupForGame, setSetupForGame] = useState(null)
   const [gameConfig, setGameConfig] = useState(null)
+  const [gameKey, setGameKey] = useState(0)
 
   const goHome = () => {
     setScreen('home')
@@ -23,27 +40,40 @@ export default function App() {
   }
 
   const handleGameSelect = (gameType) => {
-    setSetupGameType(gameType)
-    setShowSetup(true)
+    if (hasExistingGame(gameType)) {
+      setGameConfig(null)
+      setScreen(gameType)
+    } else {
+      setSetupForGame(gameType)
+    }
+  }
+
+  // Called from within a game to restart with new player setup
+  const handleRestart = () => {
+    setSetupForGame(screen)
   }
 
   const handleSetupConfirm = (config) => {
+    const game = setupForGame
+    // Clear old data so the game component initializes fresh from config
+    localStorage.removeItem(STORAGE_KEYS[game])
     setGameConfig(config)
-    setShowSetup(false)
-    setScreen(setupGameType)
+    setSetupForGame(null)
+    setScreen(game)
+    setGameKey(k => k + 1)
   }
 
   const handleSetupCancel = () => {
-    setShowSetup(false)
-    setSetupGameType(null)
+    setSetupForGame(null)
+    // screen remains unchanged: if in a game → stay there; if home → stay home
   }
 
-  if (showSetup && setupGameType) {
+  if (setupForGame) {
     return (
       <>
         <HomeScreen onSelect={handleGameSelect} />
         <SetupModal
-          gameType={setupGameType}
+          gameType={setupForGame}
           onConfirm={handleSetupConfirm}
           onCancel={handleSetupCancel}
         />
@@ -56,6 +86,12 @@ export default function App() {
   }
 
   const GameComponent = GAMES[screen]
-  return <GameComponent config={gameConfig} onBack={goHome} />
+  return (
+    <GameComponent
+      key={gameKey}
+      config={gameConfig}
+      onBack={goHome}
+      onRestart={handleRestart}
+    />
+  )
 }
-

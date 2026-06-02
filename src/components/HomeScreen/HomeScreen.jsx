@@ -4,18 +4,24 @@ import styles from './HomeScreen.module.css'
 const GAMES = [
   {
     id: 'generic',
-    name: 'Punkteblock',
-    cover: '/App_Spielblock/covers/punkteblock.svg'
+    name: 'Punkte\nblock',
+    displayName: 'Punkteblock',
+    color: '#7C3AED',
+    bg: 'linear-gradient(145deg, #8B5CF6, #6D28D9)'
   },
   {
     id: 'kniffel',
     name: 'Kniffel',
-    cover: '/App_Spielblock/covers/kniffel.svg'
+    displayName: 'Kniffel',
+    color: '#DC2626',
+    bg: 'linear-gradient(145deg, #EF4444, #B91C1C)'
   },
   {
     id: 'qwixx',
     name: 'Qwixx',
-    cover: '/App_Spielblock/covers/qwixx.svg'
+    displayName: 'Qwixx',
+    color: '#0284C7',
+    bg: null // special multicolor
   }
 ]
 

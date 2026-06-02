@@ -6,7 +6,7 @@ export default function SetupModal({
   onConfirm,
   onCancel
 }) {
-  const [players, setPlayers] = useState(['Spieler 1', 'Spieler 2'])
+  const [players, setPlayers] = useState(['', ''])
   const [winMode, setWinMode] = useState('high')
   const [targetScore, setTargetScore] = useState('')
 
@@ -17,7 +17,7 @@ export default function SetupModal({
   }
 
   const addPlayer = () => {
-    setPlayers([...players, `Spieler ${players.length + 1}`])
+    setPlayers([...players, ''])
   }
 
   const removePlayer = (idx) => {

@@ -14,14 +14,12 @@ function emptyState() {
   return { players: [] }
 }
 
-export default function KniffelGame({ config, onBack }) {
+export default function KniffelGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
-  const [newName, setNewName] = useState('')
-  const [hideAddRow, setHideAddRow] = useState(() => !!(config?.players?.length))
   const [editing, setEditing] = useState(null)
 
   useEffect(() => {
-    if (config?.players && config.players.length > 0 && state.players.length === 0) {
+    if (config?.players?.length && state.players.length === 0) {
       setState({
         players: config.players.map((name) => ({
           id: makeId(),
@@ -33,16 +31,6 @@ export default function KniffelGame({ config, onBack }) {
   }, [])
 
   const players = state.players
-
-  const addPlayer = () => {
-    const name = newName.trim()
-    if (!name) return
-    setState((s) => ({
-      ...s,
-      players: [...s.players, { id: makeId(), name, card: createScorecard() }]
-    }))
-    setNewName('')
-  }
 
   const removePlayer = (id) =>
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }))
@@ -59,39 +47,18 @@ export default function KniffelGame({ config, onBack }) {
     setEditing(null)
   }
 
-  const reset = () => {
-    if (window.confirm('Neues Spiel starten? Alle Punkte werden gelöscht.')) {
-      setState(emptyState())
-      setHideAddRow(false)
-    }
-  }
-
   const editingPlayer = editing
     ? players.find((p) => p.id === editing.playerId)
     : null
 
   return (
     <div className={styles.screen}>
-      <GameHeader title="Kniffel" onBack={onBack} onReset={reset} />
+      <GameHeader title="Kniffel" onBack={onBack} onRestart={onRestart} />
 
       <div className={styles.body}>
-        {!hideAddRow && (
-          <div className={`${styles.addRow} glass`}>
-            <input
-              className={styles.input}
-              value={newName}
-              placeholder="Spielername"
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
-            />
-            <button className="btn-primary" onClick={addPlayer}>＋</button>
-          </div>
-        )}
-
         {players.length === 0 ? (
           <div className={styles.empty}>
-            <span className={styles.emptyEmoji}>🎲</span>
-            <p>Füge Spieler hinzu, um zu starten.</p>
+            <p>Kein Spiel aktiv.</p>
           </div>
         ) : (
           <ScoreSheet

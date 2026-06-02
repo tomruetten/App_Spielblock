@@ -1,39 +1,48 @@
 .tile {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  padding: 0;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 16px;
   border-radius: var(--radius-tile);
-  overflow: hidden;
+  aspect-ratio: 1 / 1;
   text-align: left;
+  border: none;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
   transition: transform 0.28s var(--spring), box-shadow 0.22s var(--ease);
   animation: fadeUp 0.5s var(--ease) both;
 }
 
 .tile:active {
   transform: scale(0.95);
-  box-shadow: var(--shadow-float);
-}
-
-.coverWrap {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background: #eee;
-}
-
-.cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
 }
 
 .name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+/* Qwixx: 4 colored horizontal stripes at top */
+.stripes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  height: 60%;
+}
+
+.stripes span {
+  flex: 1;
   display: block;
-  padding: 12px 14px 14px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
 }
