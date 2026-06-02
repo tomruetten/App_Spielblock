@@ -38,13 +38,10 @@ export default function App() {
     setSetupGameType(null)
   }
 
-  if (screen === 'home') {
-    return <HomeScreen onSelect={handleGameSelect} />
-  }
-
   if (showSetup && setupGameType) {
     return (
       <>
+        <HomeScreen onSelect={handleGameSelect} />
         <SetupModal
           gameType={setupGameType}
           onConfirm={handleSetupConfirm}
@@ -52,6 +49,10 @@ export default function App() {
         />
       </>
     )
+  }
+
+  if (screen === 'home') {
+    return <HomeScreen onSelect={handleGameSelect} />
   }
 
   const GameComponent = GAMES[screen]

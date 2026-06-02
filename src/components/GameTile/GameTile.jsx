@@ -7,9 +7,8 @@ export default function GameTile({ game, index, onClick }) {
       style={{ animationDelay: `${index * 80 + 80}ms` }}
       onClick={onClick}
     >
-      <span className={styles.accent} style={{ background: game.gradient }} />
+      <span className={styles.dot} style={{ background: game.color }} />
       <span className={styles.name}>{game.name}</span>
-      <span className={styles.subtitle}>{game.subtitle}</span>
     </button>
   )
 }
