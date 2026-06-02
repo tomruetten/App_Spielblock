@@ -1,5 +1,6 @@
-import { useMemo, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
+import GameOver from '../../GameOver/GameOver.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
 import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './GenericScoreGame.module.css'
@@ -7,7 +8,7 @@ import styles from './GenericScoreGame.module.css'
 const STORAGE_KEY = 'spieleblock_generic'
 
 function emptyState() {
-  return { players: [], rounds: 0 }
+  return { players: [], rounds: 0, winMode: 'high', targetScore: null }
 }
 
 let nextId = Date.now()
@@ -15,6 +16,7 @@ const makeId = () => `p${nextId++}`
 
 export default function GenericScoreGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
+  const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
     if (config?.players?.length && state.players.length === 0) {
@@ -25,7 +27,9 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
           color: PLAYER_COLORS[idx % PLAYER_COLORS.length],
           scores: []
         })),
-        rounds: 0
+        rounds: 0,
+        winMode: config.winMode || 'high',
+        targetScore: config.targetScore ?? null
       })
     }
   }, [])
@@ -38,6 +42,22 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
     [players]
   )
   const leaderTotal = totals.length ? Math.max(...totals) : null
+
+  const isGameOver = useMemo(() => {
+    if (!state.targetScore || players.length === 0) return false
+    return totals.some((t) => t >= state.targetScore)
+  }, [state.targetScore, totals, players.length])
+
+  const winner = useMemo(() => {
+    if (!isGameOver) return null
+    const isLow = state.winMode === 'low'
+    const best = isLow ? Math.min(...totals) : Math.max(...totals)
+    const winners = players.filter((_, i) => totals[i] === best)
+    if (winners.length > 1) {
+      return { name: winners.map((w) => w.name).join(' & '), color: '#FBBF24', score: best, tie: true }
+    }
+    return { name: winners[0].name, color: winners[0].color, score: best }
+  }, [isGameOver, players, totals, state.winMode])
 
   const removePlayer = (id) =>
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }))
@@ -156,6 +176,14 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
           </>
         )}
       </div>
+
+      {isGameOver && !dismissed && winner && (
+        <GameOver
+          winner={winner}
+          onRestart={onRestart}
+          onDismiss={() => setDismissed(true)}
+        />
+      )}
     </div>
   )
 }

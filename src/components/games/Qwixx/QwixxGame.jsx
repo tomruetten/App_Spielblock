@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
+import GameOver from '../../GameOver/GameOver.jsx'
 import QwixxRow from './QwixxRow.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
 import {
@@ -29,6 +30,7 @@ export default function QwixxGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
   const [activeIdx, setActiveIdx] = useState(0)
+  const [dismissed, setDismissed] = useState(false)
 
   const players = state.players
   const lockedRows = state.lockedRows
@@ -56,6 +58,23 @@ export default function QwixxGame({ config, onBack, onRestart }) {
   }, [players.length, activeIdx])
 
   const active = players[activeIdx]
+
+  const isGameOver = useMemo(() => {
+    if (players.length === 0) return false
+    const lockedCount = Object.values(lockedRows).filter(Boolean).length
+    return lockedCount >= 2 || players.some((p) => p.misses >= MAX_MISSES)
+  }, [players, lockedRows])
+
+  const winner = useMemo(() => {
+    if (!isGameOver) return null
+    const scores = players.map((p) => playerScore(p))
+    const best = Math.max(...scores)
+    const winners = players.filter((_, i) => scores[i] === best)
+    if (winners.length > 1) {
+      return { name: winners.map((w) => w.name).join(' & '), color: '#FBBF24', score: best, tie: true }
+    }
+    return { name: winners[0].name, color: winners[0].color, score: best }
+  }, [isGameOver, players])
 
   const addPlayer = () => {
     const name = newName.trim()
@@ -200,6 +219,14 @@ export default function QwixxGame({ config, onBack, onRestart }) {
           </>
         )}
       </div>
+
+      {isGameOver && !dismissed && winner && (
+        <GameOver
+          winner={winner}
+          onRestart={onRestart}
+          onDismiss={() => setDismissed(true)}
+        />
+      )}
     </div>
   )
 }

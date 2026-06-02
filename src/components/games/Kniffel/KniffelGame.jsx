@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
+import GameOver from '../../GameOver/GameOver.jsx'
 import ScoreSheet from './ScoreSheet.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
-import { UPPER_FIELDS, createScorecard } from '../../../utils/kniffelRules.js'
+import { UPPER_FIELDS, createScorecard, grandTotal } from '../../../utils/kniffelRules.js'
 import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './KniffelGame.module.css'
 
@@ -18,6 +19,7 @@ function emptyState() {
 export default function KniffelGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [editing, setEditing] = useState(null)
+  const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
     if (config?.players?.length && state.players.length === 0) {
@@ -33,6 +35,22 @@ export default function KniffelGame({ config, onBack, onRestart }) {
   }, [])
 
   const players = state.players
+
+  const isGameOver = useMemo(() => {
+    if (players.length === 0) return false
+    return players.every((p) => Object.values(p.card).every((v) => v !== null))
+  }, [players])
+
+  const winner = useMemo(() => {
+    if (!isGameOver) return null
+    const scores = players.map((p) => grandTotal(p.card))
+    const best = Math.max(...scores)
+    const winners = players.filter((_, i) => scores[i] === best)
+    if (winners.length > 1) {
+      return { name: winners.map((w) => w.name).join(' & '), color: '#FBBF24', score: best, tie: true }
+    }
+    return { name: winners[0].name, color: winners[0].color, score: best }
+  }, [isGameOver, players])
 
   const removePlayer = (id) =>
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }))
@@ -77,6 +95,14 @@ export default function KniffelGame({ config, onBack, onRestart }) {
           current={editingPlayer.card[editing.field.key]}
           onPick={(val) => setValue(editing.playerId, editing.field.key, val)}
           onClose={() => setEditing(null)}
+        />
+      )}
+
+      {isGameOver && !dismissed && winner && (
+        <GameOver
+          winner={winner}
+          onRestart={onRestart}
+          onDismiss={() => setDismissed(true)}
         />
       )}
     </div>
