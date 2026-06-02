@@ -28,7 +28,7 @@ export default function QwixxGame({ config, onBack }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
   const [activeIdx, setActiveIdx] = useState(0)
-  const [hideAddRow, setHideAddRow] = useState(false)
+  const [hideAddRow, setHideAddRow] = useState(() => !!(config?.players?.length))
 
   const players = state.players
   const lockedRows = state.lockedRows
@@ -44,10 +44,8 @@ export default function QwixxGame({ config, onBack }) {
         })),
         lockedRows: { red: false, yellow: false, green: false, blue: false }
       })
-      setHideAddRow(true)
-      setActiveIdx(0)
     }
-  }, [config, state.players.length, setState])
+  }, [])
 
   // Aktiven Index in Grenzen halten
   useEffect(() => {

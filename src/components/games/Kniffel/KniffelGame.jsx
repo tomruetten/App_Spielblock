@@ -17,7 +17,7 @@ function emptyState() {
 export default function KniffelGame({ config, onBack }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
-  const [hideAddRow, setHideAddRow] = useState(false)
+  const [hideAddRow, setHideAddRow] = useState(() => !!(config?.players?.length))
   const [editing, setEditing] = useState(null)
 
   useEffect(() => {
@@ -29,9 +29,8 @@ export default function KniffelGame({ config, onBack }) {
           card: createScorecard()
         }))
       })
-      setHideAddRow(true)
     }
-  }, [config, state.players.length, setState])
+  }, [])
 
   const players = state.players
 

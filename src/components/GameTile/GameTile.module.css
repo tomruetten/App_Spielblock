@@ -1,35 +1,39 @@
 .tile {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 20px;
+  align-items: stretch;
+  padding: 0;
   border-radius: var(--radius-tile);
-  aspect-ratio: 1 / 1;
+  overflow: hidden;
   text-align: left;
-  transition: transform 0.3s var(--spring), box-shadow 0.3s var(--ease);
+  transition: transform 0.28s var(--spring), box-shadow 0.22s var(--ease);
   animation: fadeUp 0.5s var(--ease) both;
 }
 
 .tile:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
   box-shadow: var(--shadow-float);
 }
 
-.dot {
+.coverWrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #eee;
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .name {
-  font-size: 20px;
+  display: block;
+  padding: 12px 14px 14px;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--text);
-  line-height: 1.1;
-  align-self: flex-end;
 }
-

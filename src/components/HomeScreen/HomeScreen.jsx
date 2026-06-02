@@ -5,17 +5,17 @@ const GAMES = [
   {
     id: 'generic',
     name: 'Punkteblock',
-    color: '#6C3CE1'
+    cover: '/App_Spielblock/covers/punkteblock.svg'
   },
   {
     id: 'kniffel',
     name: 'Kniffel',
-    color: '#FF6B6B'
+    cover: '/App_Spielblock/covers/kniffel.svg'
   },
   {
     id: 'qwixx',
     name: 'Qwixx',
-    color: '#0A84FF'
+    cover: '/App_Spielblock/covers/qwixx.svg'
   }
 ]
 

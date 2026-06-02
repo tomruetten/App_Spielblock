@@ -1,32 +1,32 @@
 /* ===========================================================
-   Spieleblock — iOS 26 Liquid Glass Design System
+   Spieleblock — Design System
    =========================================================== */
 
 :root {
   /* Brand / accent */
   --accent: #6C3CE1;
-  --accent-soft: #8B5CF6;
+  --accent-soft: #9B72E8;
 
   /* Spielfarben (Qwixx) */
-  --qwixx-red: #FF453A;
-  --qwixx-yellow: #FFD60A;
-  --qwixx-green: #30D158;
-  --qwixx-blue: #0A84FF;
+  --qwixx-red: #E8251E;
+  --qwixx-yellow: #F5C800;
+  --qwixx-green: #2DA44E;
+  --qwixx-blue: #0E6EC4;
 
-  /* Glass surfaces (light) */
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-bg-strong: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-blur: 24px;
+  /* Glass surfaces */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-strong: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(200, 180, 240, 0.4);
+  --glass-blur: 20px;
 
   /* Text */
-  --text: #1c1c28;
-  --text-soft: rgba(28, 28, 40, 0.55);
+  --text: #1a1a2e;
+  --text-soft: rgba(26, 26, 46, 0.52);
 
   /* Layout */
   --radius-card: 28px;
-  --radius-tile: 24px;
-  --radius-btn: 16px;
+  --radius-tile: 22px;
+  --radius-btn: 14px;
   --radius-pill: 999px;
 
   /* Motion */
@@ -34,8 +34,8 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Shadow */
-  --shadow-card: 0 8px 32px rgba(31, 18, 71, 0.12);
-  --shadow-float: 0 12px 40px rgba(31, 18, 71, 0.22);
+  --shadow-card: 0 4px 20px rgba(100, 60, 200, 0.10);
+  --shadow-float: 0 10px 36px rgba(100, 60, 200, 0.20);
 
   /* Safe areas */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -44,13 +44,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --glass-bg: rgba(40, 40, 55, 0.5);
-    --glass-bg-strong: rgba(50, 50, 68, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.16);
-    --text: #f5f5f7;
-    --text-soft: rgba(245, 245, 247, 0.6);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.55);
+    --accent: #B48FFF;
+    --accent-soft: #C8AAFF;
+    --glass-bg: rgba(38, 32, 60, 0.72);
+    --glass-bg-strong: rgba(48, 40, 75, 0.88);
+    --glass-border: rgba(140, 100, 240, 0.22);
+    --text: #F0EAFF;
+    --text-soft: rgba(240, 234, 255, 0.55);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-float: 0 10px 40px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -72,17 +74,11 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background: #fafafa;
+  background: #F4F0FF;
 }
 
 @media (prefers-color-scheme: dark) {
-  body { background: #0F0A1E; }
-}
-
-@keyframes meshFloat {
-  0%   { transform: translate(0, 0) rotate(0deg) scale(1.05); }
-  50%  { transform: translate(2%, -2%) rotate(4deg) scale(1.12); }
-  100% { transform: translate(-2%, 2%) rotate(-3deg) scale(1.08); }
+  body { background: #16112A; }
 }
 
 button {
@@ -101,13 +97,13 @@ input {
 /* ---- Reusable glass surface ---- */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-card);
 }
 
-/* ---- Primary pill button ---- */
+/* ---- Primary button ---- */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -115,19 +111,19 @@ input {
   gap: 8px;
   padding: 14px 22px;
   border-radius: var(--radius-btn);
-  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  background: var(--accent);
   color: #fff;
   font-size: 17px;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(108, 60, 225, 0.4);
-  transition: transform 0.2s var(--spring), box-shadow 0.2s var(--ease);
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(108, 60, 225, 0.35);
+  transition: transform 0.18s var(--spring), box-shadow 0.18s var(--ease);
 }
 .btn-primary:active {
   transform: scale(0.95);
-  box-shadow: 0 3px 10px rgba(108, 60, 225, 0.35);
+  box-shadow: 0 2px 8px rgba(108, 60, 225, 0.3);
 }
 
-/* ---- Ghost / glass button ---- */
+/* ---- Ghost / outline button ---- */
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -135,22 +131,23 @@ input {
   gap: 6px;
   padding: 12px 18px;
   border-radius: var(--radius-btn);
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid var(--glass-border);
+  background: transparent;
+  border: 1.5px solid var(--glass-border);
   color: var(--text);
   font-size: 16px;
   font-weight: 600;
-  transition: transform 0.2s var(--spring);
+  transition: transform 0.18s var(--spring), background 0.15s var(--ease);
 }
-.btn-ghost:active { transform: scale(0.94); }
+.btn-ghost:active {
+  transform: scale(0.94);
+  background: var(--glass-bg);
+}
 
 /* Scroll niceties */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }

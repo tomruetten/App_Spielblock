@@ -20,7 +20,7 @@ const makeId = () => `p${nextId++}`
 export default function GenericScoreGame({ config, onBack }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
-  const [hideAddRow, setHideAddRow] = useState(false)
+  const [hideAddRow, setHideAddRow] = useState(() => !!(config?.players?.length))
 
   useEffect(() => {
     if (config?.players && config.players.length > 0 && state.players.length === 0) {
@@ -33,9 +33,8 @@ export default function GenericScoreGame({ config, onBack }) {
         })),
         rounds: 0
       })
-      setHideAddRow(true)
     }
-  }, [config, state.players.length, setState])
+  }, [])
 
   const players = state.players
   const rounds = state.rounds
