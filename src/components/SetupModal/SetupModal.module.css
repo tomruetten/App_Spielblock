@@ -1,0 +1,167 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  z-index: 100;
+  animation: fadeUp 0.3s var(--ease);
+}
+
+.modal {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 28px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.players {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.playerRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.playerInput {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.3);
+  font-size: 16px;
+  color: var(--text);
+}
+
+.playerInput::placeholder {
+  color: var(--text-soft);
+}
+
+.removeBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-btn);
+  background: rgba(255, 59, 48, 0.15);
+  color: #FF453A;
+  font-size: 18px;
+  font-weight: 600;
+  transition: background 0.2s var(--ease);
+}
+
+.removeBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.removeBtn:active:not(:disabled) {
+  background: rgba(255, 59, 48, 0.25);
+}
+
+.addBtn {
+  padding: 12px;
+  border-radius: var(--radius-btn);
+  background: rgba(108, 60, 225, 0.1);
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s var(--ease);
+}
+
+.addBtn:active {
+  background: rgba(108, 60, 225, 0.2);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-btn);
+}
+
+@media (prefers-color-scheme: dark) {
+  .options {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.optionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.toggleGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s var(--ease);
+}
+
+.toggle.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.numberInput {
+  padding: 10px 12px;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.3);
+  font-size: 15px;
+  color: var(--text);
+}
+
+.numberInput::placeholder {
+  color: var(--text-soft);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.buttons button {
+  flex: 1;
+}

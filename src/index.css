@@ -72,37 +72,11 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background: #f0e9ff;
-}
-
-/* Animated mesh gradient background */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -40%;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 20% 25%, #b794f6 0%, transparent 45%),
-    radial-gradient(circle at 80% 20%, #f6a6c9 0%, transparent 45%),
-    radial-gradient(circle at 75% 80%, #ffb088 0%, transparent 45%),
-    radial-gradient(circle at 25% 85%, #7aa5ff 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, #c9a7ff 0%, transparent 60%);
-  background-color: #efe6ff;
-  filter: saturate(1.2);
-  animation: meshFloat 22s ease-in-out infinite alternate;
+  background: #fafafa;
 }
 
 @media (prefers-color-scheme: dark) {
   body { background: #0F0A1E; }
-  body::before {
-    background:
-      radial-gradient(circle at 20% 25%, #4c1d95 0%, transparent 45%),
-      radial-gradient(circle at 80% 20%, #831843 0%, transparent 45%),
-      radial-gradient(circle at 75% 80%, #7c2d12 0%, transparent 45%),
-      radial-gradient(circle at 25% 85%, #1e3a8a 0%, transparent 45%),
-      radial-gradient(circle at 50% 50%, #3b0764 0%, transparent 60%);
-    background-color: #0F0A1E;
-  }
 }
 
 @keyframes meshFloat {

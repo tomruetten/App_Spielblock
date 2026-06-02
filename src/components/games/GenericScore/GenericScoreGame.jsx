@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
 import styles from './GenericScoreGame.module.css'
@@ -17,9 +17,25 @@ function emptyState() {
 let nextId = Date.now()
 const makeId = () => `p${nextId++}`
 
-export default function GenericScoreGame({ onBack }) {
+export default function GenericScoreGame({ config, onBack }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
+  const [hideAddRow, setHideAddRow] = useState(false)
+
+  useEffect(() => {
+    if (config?.players && config.players.length > 0 && state.players.length === 0) {
+      setState({
+        players: config.players.map((name, idx) => ({
+          id: makeId(),
+          name,
+          color: PLAYER_COLORS[idx % PLAYER_COLORS.length],
+          scores: []
+        })),
+        rounds: 0
+      })
+      setHideAddRow(true)
+    }
+  }, [config, state.players.length, setState])
 
   const players = state.players
   const rounds = state.rounds
@@ -84,6 +100,7 @@ export default function GenericScoreGame({ onBack }) {
   const reset = () => {
     if (window.confirm('Neues Spiel starten? Alle Punkte werden gelöscht.')) {
       setState(emptyState())
+      setHideAddRow(false)
     }
   }
 
@@ -93,16 +110,18 @@ export default function GenericScoreGame({ onBack }) {
 
       <div className={styles.body}>
         {/* Spieler hinzufügen */}
-        <div className={`${styles.addRow} glass`}>
-          <input
-            className={styles.input}
-            value={newName}
-            placeholder="Spielername"
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
-          />
-          <button className="btn-primary" onClick={addPlayer}>＋</button>
-        </div>
+        {!hideAddRow && (
+          <div className={`${styles.addRow} glass`}>
+            <input
+              className={styles.input}
+              value={newName}
+              placeholder="Spielername"
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
+            />
+            <button className="btn-primary" onClick={addPlayer}>＋</button>
+          </div>
+        )}
 
         {players.length === 0 ? (
           <div className={styles.empty}>
@@ -189,3 +208,4 @@ export default function GenericScoreGame({ onBack }) {
     </div>
   )
 }
+

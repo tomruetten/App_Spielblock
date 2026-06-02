@@ -24,13 +24,30 @@ function emptyState() {
   }
 }
 
-export default function QwixxGame({ onBack }) {
+export default function QwixxGame({ config, onBack }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
   const [activeIdx, setActiveIdx] = useState(0)
+  const [hideAddRow, setHideAddRow] = useState(false)
 
   const players = state.players
   const lockedRows = state.lockedRows
+
+  useEffect(() => {
+    if (config?.players && config.players.length > 0 && state.players.length === 0) {
+      setState({
+        players: config.players.map((name) => ({
+          id: makeId(),
+          name,
+          rows: createPlayerRows(),
+          misses: 0
+        })),
+        lockedRows: { red: false, yellow: false, green: false, blue: false }
+      })
+      setHideAddRow(true)
+      setActiveIdx(0)
+    }
+  }, [config, state.players.length, setState])
 
   // Aktiven Index in Grenzen halten
   useEffect(() => {
@@ -70,7 +87,6 @@ export default function QwixxGame({ onBack }) {
         return { ...p, rows: { ...p.rows, [rowKey]: newRow } }
       })
 
-      // Reihe sperren, wenn das Schloss neu angekreuzt wurde
       let lockedRows = s.lockedRows
       if (index === LOCK_INDEX && willCheck) {
         lockedRows = { ...s.lockedRows, [rowKey]: true }
@@ -95,6 +111,7 @@ export default function QwixxGame({ onBack }) {
     if (window.confirm('Neues Spiel starten? Alle Kreuze werden gelöscht.')) {
       setState(emptyState())
       setActiveIdx(0)
+      setHideAddRow(false)
     }
   }
 
@@ -105,16 +122,18 @@ export default function QwixxGame({ onBack }) {
       <div className={styles.body}>
         {players.length === 0 ? (
           <>
-            <div className={`${styles.addRow} glass`}>
-              <input
-                className={styles.input}
-                value={newName}
-                placeholder="Spielername"
-                onChange={(e) => setNewName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
-              />
-              <button className="btn-primary" onClick={addPlayer}>＋</button>
-            </div>
+            {!hideAddRow && (
+              <div className={`${styles.addRow} glass`}>
+                <input
+                  className={styles.input}
+                  value={newName}
+                  placeholder="Spielername"
+                  onChange={(e) => setNewName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
+                />
+                <button className="btn-primary" onClick={addPlayer}>＋</button>
+              </div>
+            )}
             <div className={styles.empty}>
               <span className={styles.emptyEmoji}>🎯</span>
               <p>Füge Spieler hinzu, um zu starten.</p>
@@ -201,3 +220,4 @@ export default function QwixxGame({ onBack }) {
     </div>
   )
 }
+

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
 import ScoreSheet from './ScoreSheet.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
@@ -14,11 +14,24 @@ function emptyState() {
   return { players: [] }
 }
 
-export default function KniffelGame({ onBack }) {
+export default function KniffelGame({ config, onBack }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [newName, setNewName] = useState('')
-  // Aktive Zelle für Eingabe-Sheet: { playerId, field }
+  const [hideAddRow, setHideAddRow] = useState(false)
   const [editing, setEditing] = useState(null)
+
+  useEffect(() => {
+    if (config?.players && config.players.length > 0 && state.players.length === 0) {
+      setState({
+        players: config.players.map((name) => ({
+          id: makeId(),
+          name,
+          card: createScorecard()
+        }))
+      })
+      setHideAddRow(true)
+    }
+  }, [config, state.players.length, setState])
 
   const players = state.players
 
@@ -50,6 +63,7 @@ export default function KniffelGame({ onBack }) {
   const reset = () => {
     if (window.confirm('Neues Spiel starten? Alle Punkte werden gelöscht.')) {
       setState(emptyState())
+      setHideAddRow(false)
     }
   }
 
@@ -62,16 +76,18 @@ export default function KniffelGame({ onBack }) {
       <GameHeader title="Kniffel" onBack={onBack} onReset={reset} />
 
       <div className={styles.body}>
-        <div className={`${styles.addRow} glass`}>
-          <input
-            className={styles.input}
-            value={newName}
-            placeholder="Spielername"
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
-          />
-          <button className="btn-primary" onClick={addPlayer}>＋</button>
-        </div>
+        {!hideAddRow && (
+          <div className={`${styles.addRow} glass`}>
+            <input
+              className={styles.input}
+              value={newName}
+              placeholder="Spielername"
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addPlayer()}
+            />
+            <button className="btn-primary" onClick={addPlayer}>＋</button>
+          </div>
+        )}
 
         {players.length === 0 ? (
           <div className={styles.empty}>
@@ -171,3 +187,4 @@ function ValueSheet({ field, current, onPick, onClose }) {
     </div>
   )
 }
+

@@ -16,21 +16,13 @@
   box-shadow: var(--shadow-float);
 }
 
-.iconWrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 18px;
+.accent {
+  display: block;
+  width: 8px;
+  height: 32px;
+  border-radius: 4px;
   margin-bottom: auto;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-}
-
-.emoji {
-  font-size: 30px;
-  line-height: 1;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .name {
@@ -45,3 +37,4 @@
   font-weight: 500;
   color: var(--text-soft);
 }
+
