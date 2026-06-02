@@ -1,0 +1,47 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 20px;
+  border-radius: var(--radius-tile);
+  aspect-ratio: 1 / 1;
+  text-align: left;
+  transition: transform 0.3s var(--spring), box-shadow 0.3s var(--ease);
+  animation: fadeUp 0.5s var(--ease) both;
+}
+
+.tile:active {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-float);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  margin-bottom: auto;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.emoji {
+  font-size: 30px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.name {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+}

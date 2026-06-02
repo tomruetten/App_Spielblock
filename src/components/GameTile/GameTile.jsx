@@ -1,0 +1,17 @@
+import styles from './GameTile.module.css'
+
+export default function GameTile({ game, index, onClick }) {
+  return (
+    <button
+      className={`${styles.tile} glass`}
+      style={{ animationDelay: `${index * 80 + 80}ms` }}
+      onClick={onClick}
+    >
+      <span className={styles.iconWrap} style={{ background: game.gradient }}>
+        <span className={styles.emoji}>{game.emoji}</span>
+      </span>
+      <span className={styles.name}>{game.name}</span>
+      <span className={styles.subtitle}>{game.subtitle}</span>
+    </button>
+  )
+}

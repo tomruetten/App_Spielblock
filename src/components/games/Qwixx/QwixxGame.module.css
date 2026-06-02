@@ -1,0 +1,198 @@
+.screen {
+  min-height: 100%;
+  padding-bottom: calc(var(--safe-bottom) + 40px);
+}
+
+.body {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 8px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.addRow {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-btn);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  font-size: 17px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(120, 120, 140, 0.12);
+  outline: none;
+}
+.input::placeholder { color: var(--text-soft); }
+
+.empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-soft);
+}
+.emptyEmoji { font-size: 56px; display: block; margin-bottom: 12px; }
+
+/* ---------- Spieler-Tabs ---------- */
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px;
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  transition: transform 0.2s var(--spring);
+}
+.tab:active { transform: scale(0.94); }
+.tabActive {
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: #fff;
+  border-color: transparent;
+}
+.tabName { font-size: 14px; font-weight: 600; }
+.tabScore { font-size: 18px; font-weight: 800; }
+.addTab {
+  flex-shrink: 0;
+  width: 44px;
+  border-radius: 16px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(108, 60, 225, 0.12);
+}
+
+/* ---------- Farbreihe ---------- */
+.qrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--row-color) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--row-color) 40%, transparent);
+  transition: opacity 0.3s;
+}
+.qrowLocked { opacity: 0.55; }
+
+.rowTag {
+  flex-shrink: 0;
+  width: 18px;
+  align-self: stretch;
+  border-radius: 8px;
+  background: var(--row-color);
+  font-size: 0; /* nur Farbstreifen */
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.qcell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  font-size: clamp(12px, 3.4vw, 17px);
+  font-weight: 700;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  color: color-mix(in srgb, var(--row-color) 75%, #000);
+  transition: transform 0.15s var(--spring);
+}
+@media (prefers-color-scheme: dark) {
+  .qcell { background: rgba(255, 255, 255, 0.82); }
+}
+.qcell:active { transform: scale(0.88); }
+
+.qcellChecked {
+  background: var(--row-color);
+  color: #fff;
+}
+.mark {
+  position: absolute;
+  font-size: clamp(16px, 4.5vw, 22px);
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.qcellDisabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.qcellLock {
+  font-size: clamp(13px, 3.6vw, 18px);
+  background: rgba(255, 255, 255, 0.85);
+}
+.qcellLock.qcellChecked { background: var(--row-color); }
+
+/* ---------- Footer: Fehlwürfe + Punkte ---------- */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--radius-card);
+  margin-top: 4px;
+}
+.missesBlock { display: flex; flex-direction: column; gap: 6px; }
+.missesLabel { font-size: 13px; font-weight: 600; color: var(--text-soft); }
+.missDots { display: flex; gap: 8px; align-items: center; }
+.missDot {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 50%;
+  color: var(--text-soft);
+  background: rgba(120, 120, 140, 0.16);
+  transition: transform 0.15s var(--spring);
+}
+.missDot:active { transform: scale(0.85); }
+.missActive {
+  background: var(--qwixx-red);
+  color: #fff;
+}
+.missPenalty { font-size: 13px; font-weight: 700; color: var(--qwixx-red); }
+
+.scoreBlock { display: flex; flex-direction: column; align-items: flex-end; }
+.scoreLabel { font-size: 13px; font-weight: 600; color: var(--text-soft); }
+.scoreValue {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.removePlayer {
+  align-self: center;
+  margin-top: 4px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+  border-radius: var(--radius-pill);
+  background: rgba(120, 120, 140, 0.12);
+}
