@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="bgP" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFEF5"/>
+      <stop offset="100%" stop-color="#FFF3D0"/>
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="300" height="300" fill="url(#bgP)"/>
+
+  <!-- Spiral binding on left -->
+  <rect x="0" y="0" width="32" height="300" fill="#E8E0F8"/>
+  <circle cx="16" cy="30"  r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="30"  r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="65"  r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="65"  r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="100" r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="100" r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="135" r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="135" r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="170" r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="170" r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="205" r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="205" r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="240" r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="240" r="3.5" fill="#9B72E8"/>
+  <circle cx="16" cy="275" r="8" fill="white" stroke="#9B72E8" stroke-width="2.5"/>
+  <circle cx="16" cy="275" r="3.5" fill="#9B72E8"/>
+
+  <!-- Horizontal ruled lines -->
+  <line x1="40" y1="55"  x2="286" y2="55"  stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="80"  x2="286" y2="80"  stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="105" x2="286" y2="105" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="130" x2="286" y2="130" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="155" x2="286" y2="155" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="180" x2="286" y2="180" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="205" x2="286" y2="205" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="230" x2="286" y2="230" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="40" y1="255" x2="286" y2="255" stroke="#D8C8F8" stroke-width="1.5"/>
+
+  <!-- Vertical column separator -->
+  <line x1="160" y1="50" x2="160" y2="270" stroke="#D8C8F8" stroke-width="1.5"/>
+  <line x1="220" y1="50" x2="220" y2="270" stroke="#D8C8F8" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="163" y="32" font-family="Arial Black, Arial, sans-serif" font-size="18" font-weight="900" text-anchor="middle" fill="#5B21B6">PUNKTE</text>
+  <text x="163" y="48" font-family="Arial Black, Arial, sans-serif" font-size="18" font-weight="900" text-anchor="middle" fill="#5B21B6">BLOCK</text>
+
+  <!-- Sample score entries (playful, suggest gameplay) -->
+  <text x="55"  y="74"  font-family="Arial, sans-serif" font-size="13" fill="#7C3AED" font-weight="600">Anna</text>
+  <text x="167" y="74"  font-family="Arial, sans-serif" font-size="13" fill="#7C3AED" font-weight="600">Ben</text>
+  <text x="228" y="74"  font-family="Arial, sans-serif" font-size="13" fill="#7C3AED" font-weight="600">Lisa</text>
+
+  <text x="55"  y="100" font-family="Arial, sans-serif" font-size="14" fill="#333">12</text>
+  <text x="167" y="100" font-family="Arial, sans-serif" font-size="14" fill="#333">8</text>
+  <text x="228" y="100" font-family="Arial, sans-serif" font-size="14" fill="#333">15</text>
+
+  <text x="55"  y="125" font-family="Arial, sans-serif" font-size="14" fill="#333">7</text>
+  <text x="167" y="125" font-family="Arial, sans-serif" font-size="14" fill="#333">14</text>
+  <text x="228" y="125" font-family="Arial, sans-serif" font-size="14" fill="#333">6</text>
+
+  <text x="55"  y="150" font-family="Arial, sans-serif" font-size="14" fill="#333">20</text>
+  <text x="167" y="150" font-family="Arial, sans-serif" font-size="14" fill="#333">11</text>
+  <text x="228" y="150" font-family="Arial, sans-serif" font-size="14" fill="#333">9</text>
+
+  <!-- Total row -->
+  <rect x="40" y="258" width="246" height="30" rx="6" fill="#7C3AED" opacity="0.12"/>
+  <text x="55"  y="278" font-family="Arial, sans-serif" font-size="14" fill="#5B21B6" font-weight="700">39</text>
+  <text x="167" y="278" font-family="Arial, sans-serif" font-size="14" fill="#5B21B6" font-weight="700">33</text>
+  <text x="228" y="278" font-family="Arial, sans-serif" font-size="14" fill="#5B21B6" font-weight="700">30</text>
+  <text x="100" y="278" font-family="Arial, sans-serif" font-size="10" fill="#5B21B6" font-weight="600">GESAMT</text>
+</svg>
