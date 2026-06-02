@@ -1,14 +1,10 @@
 import { useMemo, useEffect } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
+import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './GenericScoreGame.module.css'
 
 const STORAGE_KEY = 'spieleblock_generic'
-
-const PLAYER_COLORS = [
-  '#10B981', '#38BDF8', '#F472B6', '#FBBF24',
-  '#FB923C', '#4ADE80', '#60A5FA', '#E879F9'
-]
 
 function emptyState() {
   return { players: [], rounds: 0 }

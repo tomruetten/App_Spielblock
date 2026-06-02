@@ -15,10 +15,7 @@
   font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(120deg, #10B981 0%, #3B82F6 50%, #F97316 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
 }
 
 .grid {

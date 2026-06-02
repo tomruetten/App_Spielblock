@@ -58,7 +58,7 @@
 }
 .tab:active { transform: scale(0.94); }
 .tabActive {
-  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  background: var(--player-color, var(--accent));
   color: #fff;
   border-color: transparent;
 }
@@ -71,7 +71,7 @@
   font-size: 22px;
   font-weight: 600;
   color: var(--accent);
-  background: rgba(108, 60, 225, 0.12);
+  background: rgba(244, 63, 94, 0.10);
 }
 
 /* ---------- Farbreihe ---------- */
@@ -180,10 +180,7 @@
   font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--player-color, var(--accent));
 }
 
 .removePlayer {

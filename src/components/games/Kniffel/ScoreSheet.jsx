@@ -10,23 +10,27 @@ import {
 } from '../../../utils/kniffelRules.js'
 import styles from './KniffelGame.module.css'
 
-function Cell({ value, onTap }) {
+function Cell({ value, onTap, color }) {
   const filled = value !== null && value !== undefined
+  const struck = filled && value === 0
+  const filledStyle = filled && !struck && color
+    ? { background: `${color}22`, color }
+    : {}
   return (
     <button
-      className={`${styles.cell} ${filled ? styles.cellFilled : ''} ${
-        filled && value === 0 ? styles.cellStruck : ''
-      }`}
+      className={`${styles.cell} ${filled ? styles.cellFilled : ''} ${struck ? styles.cellStruck : ''}`}
+      style={filledStyle}
       onClick={onTap}
     >
-      {filled ? (value === 0 ? '–' : value) : ''}
+      {filled ? (struck ? '–' : value) : ''}
     </button>
   )
 }
 
-function SummaryCell({ value, accent }) {
+function SummaryCell({ value, accent, color }) {
+  const style = accent && color ? { background: color, color: '#fff' } : {}
   return (
-    <div className={`${styles.cell} ${styles.summaryCell} ${accent ? styles.summaryAccent : ''}`}>
+    <div className={`${styles.cell} ${styles.summaryCell} ${accent ? styles.summaryAccent : ''}`} style={style}>
       {value}
     </div>
   )
@@ -46,6 +50,7 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
           key={p.id}
           value={p.card[field.key]}
           onTap={() => onCellTap(p.id, field)}
+          color={p.color}
         />
       ))}
     </div>
@@ -57,7 +62,7 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
         <span className={styles.rowName}>{label}</span>
       </div>
       {players.map((p) => (
-        <SummaryCell key={p.id} value={fn(p.card)} accent={accent} />
+        <SummaryCell key={p.id} value={fn(p.card)} accent={accent} color={p.color} />
       ))}
     </div>
   )
@@ -69,7 +74,8 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
         <div className={styles.rowLabel} />
         {players.map((p) => (
           <div key={p.id} className={styles.playerHead}>
-            <span className={styles.playerName}>{p.name}</span>
+            <span className={styles.playerDot} style={{ background: p.color }} />
+            <span className={styles.playerName} style={{ color: p.color }}>{p.name}</span>
             <button
               className={styles.playerRemove}
               onClick={() => onRemovePlayer(p.id)}
@@ -97,6 +103,7 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
             <div
               key={p.id}
               className={`${styles.cell} ${styles.summaryCell} ${bonus ? styles.summaryAccent : ''}`}
+              style={bonus && p.color ? { background: p.color, color: '#fff' } : {}}
             >
               {bonus ? '+35' : remaining > 0 ? `−${remaining}` : '0'}
             </div>

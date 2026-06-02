@@ -3,6 +3,7 @@ import GameHeader from '../../GameHeader/GameHeader.jsx'
 import ScoreSheet from './ScoreSheet.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
 import { UPPER_FIELDS, createScorecard } from '../../../utils/kniffelRules.js'
+import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './KniffelGame.module.css'
 
 const STORAGE_KEY = 'spieleblock_kniffel'
@@ -21,9 +22,10 @@ export default function KniffelGame({ config, onBack, onRestart }) {
   useEffect(() => {
     if (config?.players?.length && state.players.length === 0) {
       setState({
-        players: config.players.map((name) => ({
+        players: config.players.map((name, idx) => ({
           id: makeId(),
           name,
+          color: PLAYER_COLORS[idx % PLAYER_COLORS.length],
           card: createScorecard()
         }))
       })

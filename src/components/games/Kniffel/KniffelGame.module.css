@@ -56,13 +56,21 @@
 .playerHead {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   padding: 8px 4px;
-  min-height: 40px;
+  min-height: 48px;
+}
+.playerDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 .playerName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   text-align: center;
   overflow: hidden;
@@ -104,8 +112,8 @@
   color: var(--text);
   transition: transform 0.15s var(--spring), background 0.2s;
 }
-button.cell:active { transform: scale(0.92); background: rgba(108, 60, 225, 0.16); }
-.cellFilled { background: rgba(108, 60, 225, 0.14); color: var(--accent); font-weight: 700; }
+button.cell:active { transform: scale(0.92); background: rgba(120, 120, 140, 0.20); }
+.cellFilled { font-weight: 700; }
 .cellStruck { color: var(--text-soft); background: rgba(120, 120, 140, 0.12); }
 
 .sectionLabel {

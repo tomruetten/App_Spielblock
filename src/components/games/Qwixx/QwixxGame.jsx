@@ -10,6 +10,7 @@ import {
   canCheck,
   playerScore
 } from '../../../utils/qwixxRules.js'
+import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './QwixxGame.module.css'
 
 const STORAGE_KEY = 'spieleblock_qwixx'
@@ -35,9 +36,10 @@ export default function QwixxGame({ config, onBack, onRestart }) {
   useEffect(() => {
     if (config?.players?.length && state.players.length === 0) {
       setState({
-        players: config.players.map((name) => ({
+        players: config.players.map((name, idx) => ({
           id: makeId(),
           name,
+          color: PLAYER_COLORS[idx % PLAYER_COLORS.length],
           rows: createPlayerRows(),
           misses: 0
         })),
@@ -60,7 +62,13 @@ export default function QwixxGame({ config, onBack, onRestart }) {
     if (!name) return
     setState((s) => ({
       ...s,
-      players: [...s.players, { id: makeId(), name, rows: createPlayerRows(), misses: 0 }]
+      players: [...s.players, {
+        id: makeId(),
+        name,
+        color: PLAYER_COLORS[s.players.length % PLAYER_COLORS.length],
+        rows: createPlayerRows(),
+        misses: 0
+      }]
     }))
     setNewName('')
     setActiveIdx(players.length)
@@ -121,6 +129,7 @@ export default function QwixxGame({ config, onBack, onRestart }) {
                 <button
                   key={p.id}
                   className={`${styles.tab} ${i === activeIdx ? styles.tabActive : ''}`}
+                  style={{ '--player-color': p.color }}
                   onClick={() => setActiveIdx(i)}
                 >
                   <span className={styles.tabName}>{p.name}</span>
@@ -174,7 +183,7 @@ export default function QwixxGame({ config, onBack, onRestart }) {
                     <span className={styles.missPenalty}>−{active.misses * 5}</span>
                   </div>
 
-                  <div className={styles.scoreBlock}>
+                  <div className={styles.scoreBlock} style={{ '--player-color': active.color }}>
                     <span className={styles.scoreLabel}>Punkte</span>
                     <span className={styles.scoreValue}>{playerScore(active)}</span>
                   </div>
