@@ -17,6 +17,7 @@ const makeId = () => `p${nextId++}`
 export default function GenericScoreGame({ config, onBack, onRestart }) {
   const [state, setState] = useLocalStorage(STORAGE_KEY, emptyState())
   const [dismissed, setDismissed] = useState(false)
+  const [focusedCell, setFocusedCell] = useState(null)
 
   useEffect(() => {
     if (config?.players?.length && state.players.length === 0) {
@@ -45,10 +46,11 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
 
   const isGameOver = useMemo(() => {
     if (!state.targetScore || players.length === 0 || rounds === 0) return false
+    if (focusedCell && focusedCell.roundIdx === rounds - 1) return false
     const allEntered = players.every((p) => p.scores[rounds - 1] !== null)
     if (!allEntered) return false
     return totals.some((t) => t >= state.targetScore)
-  }, [state.targetScore, totals, players, rounds])
+  }, [state.targetScore, totals, players, rounds, focusedCell])
 
   const winner = useMemo(() => {
     if (!isGameOver) return null
@@ -166,6 +168,8 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
                       value={p.scores[r] == null || p.scores[r] === 0 ? '' : p.scores[r]}
                       placeholder="0"
                       onChange={(e) => setScore(p.id, r, e.target.value)}
+                      onFocus={() => setFocusedCell({ playerId: p.id, roundIdx: r })}
+                      onBlur={() => setFocusedCell(null)}
                     />
                   ))}
                 </div>
