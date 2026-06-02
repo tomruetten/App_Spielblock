@@ -44,9 +44,11 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
   const leaderTotal = totals.length ? Math.max(...totals) : null
 
   const isGameOver = useMemo(() => {
-    if (!state.targetScore || players.length === 0) return false
+    if (!state.targetScore || players.length === 0 || rounds === 0) return false
+    const allEntered = players.every((p) => p.scores[rounds - 1] !== null)
+    if (!allEntered) return false
     return totals.some((t) => t >= state.targetScore)
-  }, [state.targetScore, totals, players.length])
+  }, [state.targetScore, totals, players, rounds])
 
   const winner = useMemo(() => {
     if (!isGameOver) return null
@@ -66,7 +68,7 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
     setState((s) => ({
       ...s,
       rounds: s.rounds + 1,
-      players: s.players.map((p) => ({ ...p, scores: [...p.scores, 0] }))
+      players: s.players.map((p) => ({ ...p, scores: [...p.scores, null] }))
     }))
 
   const removeRound = (roundIdx) =>
@@ -161,7 +163,7 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
                       className={styles.cell}
                       type="number"
                       inputMode="numeric"
-                      value={p.scores[r] === 0 ? '' : p.scores[r]}
+                      value={p.scores[r] == null || p.scores[r] === 0 ? '' : p.scores[r]}
                       placeholder="0"
                       onChange={(e) => setScore(p.id, r, e.target.value)}
                     />
