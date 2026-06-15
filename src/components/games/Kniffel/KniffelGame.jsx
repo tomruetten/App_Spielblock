@@ -115,6 +115,30 @@ function ValueSheet({ field, current, onPick, onClose }) {
   const [manual, setManual] = useState(
     current !== null && current !== undefined ? String(current) : ''
   )
+  const [keyboardInset, setKeyboardInset] = useState(0)
+
+  // Body-Scroll sperren, solange das Sheet offen ist
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prevOverflow }
+  }, [])
+
+  // Sheet über die eingeblendete Tastatur anheben (visualViewport-Höhe ändert sich)
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const update = () => {
+      setKeyboardInset(Math.max(0, window.innerHeight - vv.height - vv.offsetTop))
+    }
+    update()
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => {
+      vv.removeEventListener('resize', update)
+      vv.removeEventListener('scroll', update)
+    }
+  }, [])
 
   // Optionen je Feldtyp
   let options = null
@@ -135,6 +159,7 @@ function ValueSheet({ field, current, onPick, onClose }) {
     <div className={styles.sheetBackdrop} onClick={onClose}>
       <div
         className={`${styles.sheet} glass`}
+        style={{ marginBottom: keyboardInset }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.sheetHandle} />
