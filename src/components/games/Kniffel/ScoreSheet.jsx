@@ -6,8 +6,8 @@ import {
   bonusRemaining,
   lowerSum,
   grandTotal,
-  kniffelBonusCount,
   kniffelBonusValue,
+  KNIFFEL_VALUE,
   BONUS_THRESHOLD
 } from '../../../utils/kniffelRules.js'
 import styles from './KniffelGame.module.css'
@@ -47,14 +47,22 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
         <span className={styles.rowName}>{field.label}</span>
         <span className={styles.rowHint}>{field.hint}</span>
       </div>
-      {players.map((p) => (
-        <Cell
-          key={p.id}
-          value={p.card[field.key]}
-          onTap={() => onCellTap(p.id, field)}
-          color={p.color}
-        />
-      ))}
+      {players.map((p) => {
+        const raw = p.card[field.key]
+        // Beim Kniffel die Mehrfach-Kniffel direkt einrechnen: 50 → 150 → 250 …
+        const value =
+          field.key === 'kniffel' && raw === KNIFFEL_VALUE
+            ? raw + kniffelBonusValue(p.card)
+            : raw
+        return (
+          <Cell
+            key={p.id}
+            value={value}
+            onTap={() => onCellTap(p.id, field)}
+            color={p.color}
+          />
+        )
+      })}
     </div>
   )
 
@@ -115,27 +123,6 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
 
       <div className={styles.sectionLabel}>Unterer Block</div>
       {LOWER_FIELDS.map(renderFieldRow)}
-
-      {players.some((p) => kniffelBonusCount(p.card) > 0) && (
-        <div className={`${styles.row} ${styles.summaryRow}`} style={gridStyle}>
-          <div className={styles.rowLabel}>
-            <span className={styles.rowName}>Kniffel-Bonus</span>
-            <span className={styles.rowHint}>je weiterer Kniffel +100</span>
-          </div>
-          {players.map((p) => {
-            const count = kniffelBonusCount(p.card)
-            return (
-              <div
-                key={p.id}
-                className={`${styles.cell} ${styles.summaryCell} ${count > 0 ? styles.summaryAccent : ''}`}
-                style={count > 0 && p.color ? { background: p.color, color: '#fff' } : {}}
-              >
-                {count > 0 ? `+${kniffelBonusValue(p.card)}` : '–'}
-              </div>
-            )
-          })}
-        </div>
-      )}
 
       {renderSummaryRow('Gesamt', grandTotal, true)}
     </div>

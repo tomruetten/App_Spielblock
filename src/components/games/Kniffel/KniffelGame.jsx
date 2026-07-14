@@ -93,6 +93,8 @@ export default function KniffelGame({ config, onBack, onRestart }) {
           : p
       )
     }))
+    // Popup schließen wie bei jeder anderen Eingabe
+    setEditing(null)
   }
 
   const editingPlayer = editing
