@@ -91,7 +91,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.tableRow { padding: 3px 4px; }
+.tableRow { padding: 3px 4px; transition: opacity 0.2s; }
 .roundNum {
   display: block;
   text-align: center;
@@ -99,6 +99,8 @@
   font-weight: 700;
   color: var(--text-soft);
 }
+
+.rowLocked { opacity: 0.4; }
 
 .cell {
   width: 100%;
@@ -132,12 +134,20 @@
 }
 .cellPendingValue { font-size: 15px; font-weight: 700; color: var(--accent); line-height: 1.1; }
 
+.cellLocked {
+  background: rgba(120, 120, 140, 0.05);
+  cursor: not-allowed;
+}
+.cellLocked:active { transform: none; }
+.lockIcon { font-size: 13px; opacity: 0.55; }
+
 @media (prefers-color-scheme: dark) {
   .cellHit { background: rgba(74, 222, 128, 0.16); }
   .cellHit .cellScore { color: #4ADE80; }
   .cellMiss { background: rgba(248, 113, 113, 0.16); }
   .cellMiss .cellScore { color: #F87171; }
   .cellPending { background: rgba(167, 139, 250, 0.20); }
+  .cellLocked { background: rgba(255, 255, 255, 0.03); }
 }
 
 /* ---------- Ansage-/Stiche-Sheet ---------- */

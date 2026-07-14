@@ -170,45 +170,59 @@ export default function WizardGame({ config, onBack, onRestart }) {
                 ))}
               </div>
 
-              {Array.from({ length: rounds }).map((_, r) => (
-                <div key={r} className={styles.tableRow}>
-                  <span className={styles.roundNum}>{r + 1}</span>
-                  {players.map((p) => {
-                    const round = p.rounds[r]
-                    const score = roundScore(round)
-                    const entered = isRoundEntered(round)
-                    const pending = round.bid !== null && round.tricks === null
-                    const hit = entered && round.bid === round.tricks
-                    return (
-                      <button
-                        key={p.id}
-                        className={`${styles.cell} ${
-                          entered
-                            ? (hit ? styles.cellHit : styles.cellMiss)
-                            : pending ? styles.cellPending : ''
-                        }`}
-                        onClick={() => setEditing({ playerId: p.id, roundIdx: r })}
-                      >
-                        {entered ? (
-                          <>
-                            <span className={styles.cellScore}>
-                              {score > 0 ? `+${score}` : score}
-                            </span>
-                            <span className={styles.cellSub}>{round.bid}/{round.tricks}</span>
-                          </>
-                        ) : pending ? (
-                          <>
-                            <span className={styles.cellPendingValue}>{round.bid}</span>
-                            <span className={styles.cellSub}>Ansage</span>
-                          </>
-                        ) : (
-                          <span className={styles.cellEmpty}>–</span>
-                        )}
-                      </button>
-                    )
-                  })}
-                </div>
-              ))}
+              {Array.from({ length: rounds }).map((_, r) => {
+                // Runde erst spielbar, wenn die vorherige komplett ist – bereits
+                // vorhandene Einträge (z.B. aus älteren Spielständen) bleiben
+                // aber immer sichtbar/bearbeitbar.
+                const prevRoundComplete = r === 0 || players.every((p) => isRoundEntered(p.rounds[r - 1]))
+                const noDataYet = players.every((p) => p.rounds[r].bid === null)
+                const locked = !prevRoundComplete && noDataYet
+
+                return (
+                  <div key={r} className={`${styles.tableRow} ${locked ? styles.rowLocked : ''}`}>
+                    <span className={styles.roundNum}>{r + 1}</span>
+                    {players.map((p) => {
+                      const round = p.rounds[r]
+                      const score = roundScore(round)
+                      const entered = isRoundEntered(round)
+                      const pending = round.bid !== null && round.tricks === null
+                      const hit = entered && round.bid === round.tricks
+                      return (
+                        <button
+                          key={p.id}
+                          className={`${styles.cell} ${
+                            locked
+                              ? styles.cellLocked
+                              : entered
+                                ? (hit ? styles.cellHit : styles.cellMiss)
+                                : pending ? styles.cellPending : ''
+                          }`}
+                          disabled={locked}
+                          onClick={() => setEditing({ playerId: p.id, roundIdx: r })}
+                        >
+                          {locked ? (
+                            <span className={styles.lockIcon} aria-label="Noch gesperrt">🔒</span>
+                          ) : entered ? (
+                            <>
+                              <span className={styles.cellScore}>
+                                {score > 0 ? `+${score}` : score}
+                              </span>
+                              <span className={styles.cellSub}>{round.bid}/{round.tricks}</span>
+                            </>
+                          ) : pending ? (
+                            <>
+                              <span className={styles.cellPendingValue}>{round.bid}</span>
+                              <span className={styles.cellSub}>Ansage</span>
+                            </>
+                          ) : (
+                            <span className={styles.cellEmpty}>–</span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )
+              })}
             </div>
           </>
         )}
