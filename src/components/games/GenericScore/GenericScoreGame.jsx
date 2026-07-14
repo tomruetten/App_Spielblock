@@ -105,14 +105,20 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
       }))
     }))
 
-  const setScore = (playerId, roundIdx, value) => {
-    const num = value === '' || value === '-' ? 0 : parseInt(value, 10)
-    const safe = Number.isNaN(num) ? 0 : num
+  const setScore = (playerId, roundIdx, raw) => {
+    // Leeres Feld = kein Eintrag (null); eine explizit getippte 0 bleibt 0
+    let value
+    if (raw === '' || raw === '-') {
+      value = null
+    } else {
+      const num = parseInt(raw, 10)
+      value = Number.isNaN(num) ? null : num
+    }
     setState((s) => ({
       ...s,
       players: s.players.map((p) =>
         p.id === playerId
-          ? { ...p, scores: p.scores.map((v, i) => (i === roundIdx ? safe : v)) }
+          ? { ...p, scores: p.scores.map((v, i) => (i === roundIdx ? value : v)) }
           : p
       )
     }))
@@ -186,7 +192,7 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
                       className={styles.cell}
                       type="number"
                       inputMode="numeric"
-                      value={p.scores[r] == null || p.scores[r] === 0 ? '' : p.scores[r]}
+                      value={p.scores[r] == null ? '' : p.scores[r]}
                       placeholder="0"
                       onChange={(e) => setScore(p.id, r, e.target.value)}
                       onFocus={() => setFocusedCell({ playerId: p.id, roundIdx: r })}
