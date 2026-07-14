@@ -9,6 +9,7 @@ export default function SetupModal({
   const [players, setPlayers] = useState(['', ''])
   const [winMode, setWinMode] = useState('high')
   const [targetScore, setTargetScore] = useState('')
+  const [maxRounds, setMaxRounds] = useState('')
 
   const updatePlayer = (idx, name) => {
     const newPlayers = [...players]
@@ -31,7 +32,8 @@ export default function SetupModal({
       players: players.filter(p => p.trim()),
       ...(gameType === 'generic' && {
         winMode,
-        targetScore: targetScore ? parseInt(targetScore) : null
+        targetScore: targetScore ? parseInt(targetScore) : null,
+        maxRounds: maxRounds ? parseInt(maxRounds) : null
       })
     }
     onConfirm(config)
@@ -94,6 +96,17 @@ export default function SetupModal({
                 value={targetScore}
                 onChange={(e) => setTargetScore(e.target.value)}
                 placeholder="z.B. 100"
+                className={styles.numberInput}
+              />
+            </div>
+
+            <div className={styles.optionGroup}>
+              <label className={styles.label}>Max. Rundenzahl (optional)</label>
+              <input
+                type="number"
+                value={maxRounds}
+                onChange={(e) => setMaxRounds(e.target.value)}
+                placeholder="z.B. 10"
                 className={styles.numberInput}
               />
             </div>

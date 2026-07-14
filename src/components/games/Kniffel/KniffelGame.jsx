@@ -3,7 +3,15 @@ import GameHeader from '../../GameHeader/GameHeader.jsx'
 import GameOver from '../../GameOver/GameOver.jsx'
 import ScoreSheet from './ScoreSheet.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
-import { UPPER_FIELDS, createScorecard, grandTotal } from '../../../utils/kniffelRules.js'
+import {
+  UPPER_FIELDS,
+  ALL_FIELDS,
+  createScorecard,
+  grandTotal,
+  KNIFFEL_VALUE,
+  kniffelBonusCount
+} from '../../../utils/kniffelRules.js'
+import { buildRanking } from '../../../utils/ranking.js'
 import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './KniffelGame.module.css'
 
@@ -38,8 +46,15 @@ export default function KniffelGame({ config, onBack, onRestart }) {
 
   const isGameOver = useMemo(() => {
     if (players.length === 0) return false
-    return players.every((p) => Object.values(p.card).every((v) => v !== null))
+    return players.every((p) => ALL_FIELDS.every((f) => p.card[f.key] !== null))
   }, [players])
+
+  const ranking = useMemo(
+    () => buildRanking(
+      players.map((p) => ({ name: p.name, color: p.color, score: grandTotal(p.card) }))
+    ),
+    [players]
+  )
 
   const winner = useMemo(() => {
     if (!isGameOver) return null
@@ -58,13 +73,26 @@ export default function KniffelGame({ config, onBack, onRestart }) {
   const setValue = (playerId, fieldKey, value) => {
     setState((s) => ({
       ...s,
+      players: s.players.map((p) => {
+        if (p.id !== playerId) return p
+        const card = { ...p.card, [fieldKey]: value }
+        // Wird der Kniffel gestrichen/gelöscht, entfallen auch die Bonus-Kniffel
+        if (fieldKey === 'kniffel' && value !== KNIFFEL_VALUE) card.kniffelBonus = 0
+        return { ...p, card }
+      })
+    }))
+    setEditing(null)
+  }
+
+  const changeKniffelBonus = (playerId, delta) => {
+    setState((s) => ({
+      ...s,
       players: s.players.map((p) =>
         p.id === playerId
-          ? { ...p, card: { ...p.card, [fieldKey]: value } }
+          ? { ...p, card: { ...p.card, kniffelBonus: Math.max(0, (p.card.kniffelBonus ?? 0) + delta) } }
           : p
       )
     }))
-    setEditing(null)
   }
 
   const editingPlayer = editing
@@ -93,7 +121,9 @@ export default function KniffelGame({ config, onBack, onRestart }) {
         <ValueSheet
           field={editing.field}
           current={editingPlayer.card[editing.field.key]}
+          bonusCount={kniffelBonusCount(editingPlayer.card)}
           onPick={(val) => setValue(editing.playerId, editing.field.key, val)}
+          onBonusChange={(delta) => changeKniffelBonus(editing.playerId, delta)}
           onClose={() => setEditing(null)}
         />
       )}
@@ -101,6 +131,7 @@ export default function KniffelGame({ config, onBack, onRestart }) {
       {isGameOver && !dismissed && winner && (
         <GameOver
           winner={winner}
+          ranking={ranking}
           onRestart={onRestart}
           onDismiss={() => setDismissed(true)}
         />
@@ -111,7 +142,7 @@ export default function KniffelGame({ config, onBack, onRestart }) {
 
 /* ---------- Eingabe-Sheet ---------- */
 
-function ValueSheet({ field, current, onPick, onClose }) {
+function ValueSheet({ field, current, bonusCount = 0, onPick, onBonusChange, onClose }) {
   const [manual, setManual] = useState(
     current !== null && current !== undefined ? String(current) : ''
   )
@@ -155,6 +186,11 @@ function ValueSheet({ field, current, onPick, onClose }) {
     onPick(Number.isNaN(num) ? 0 : Math.max(0, num))
   }
 
+  // Mehrfach-Kniffel: nur anbieten, wenn bereits ein gültiger Kniffel (50) steht
+  const isKniffelField = field.key === 'kniffel'
+  const showBonus = isKniffelField && current === KNIFFEL_VALUE
+  const bonusTotal = KNIFFEL_VALUE + bonusCount * 100
+
   return (
     <div className={styles.sheetBackdrop} onClick={onClose}>
       <div
@@ -194,6 +230,33 @@ function ValueSheet({ field, current, onPick, onClose }) {
             <button className={styles.strikeBtn} onClick={() => onPick(0)}>
               ✕ Streichen
             </button>
+          </div>
+        )}
+
+        {showBonus && (
+          <div className={styles.bonusBox}>
+            <div className={styles.bonusInfo}>
+              <span className={styles.bonusTitle}>Weiterer Kniffel</span>
+              <span className={styles.bonusHint}>
+                {bonusCount > 0
+                  ? `${bonusCount}× Bonus · Kniffel gesamt ${bonusTotal} Punkte`
+                  : 'Nochmal Kniffel geworfen? +100 Punkte'}
+              </span>
+            </div>
+            <div className={styles.bonusControls}>
+              {bonusCount > 0 && (
+                <button
+                  className={styles.bonusMinus}
+                  onClick={() => onBonusChange(-1)}
+                  aria-label="Bonus-Kniffel entfernen"
+                >
+                  −
+                </button>
+              )}
+              <button className={styles.bonusAdd} onClick={() => onBonusChange(1)}>
+                ＋100 Punkte
+              </button>
+            </div>
           </div>
         )}
 

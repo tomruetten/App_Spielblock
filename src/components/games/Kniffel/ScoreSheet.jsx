@@ -6,6 +6,8 @@ import {
   bonusRemaining,
   lowerSum,
   grandTotal,
+  kniffelBonusCount,
+  kniffelBonusValue,
   BONUS_THRESHOLD
 } from '../../../utils/kniffelRules.js'
 import styles from './KniffelGame.module.css'
@@ -113,6 +115,27 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
 
       <div className={styles.sectionLabel}>Unterer Block</div>
       {LOWER_FIELDS.map(renderFieldRow)}
+
+      {players.some((p) => kniffelBonusCount(p.card) > 0) && (
+        <div className={`${styles.row} ${styles.summaryRow}`} style={gridStyle}>
+          <div className={styles.rowLabel}>
+            <span className={styles.rowName}>Kniffel-Bonus</span>
+            <span className={styles.rowHint}>je weiterer Kniffel +100</span>
+          </div>
+          {players.map((p) => {
+            const count = kniffelBonusCount(p.card)
+            return (
+              <div
+                key={p.id}
+                className={`${styles.cell} ${styles.summaryCell} ${count > 0 ? styles.summaryAccent : ''}`}
+                style={count > 0 && p.color ? { background: p.color, color: '#fff' } : {}}
+              >
+                {count > 0 ? `+${kniffelBonusValue(p.card)}` : '–'}
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {renderSummaryRow('Gesamt', grandTotal, true)}
     </div>

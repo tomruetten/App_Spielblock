@@ -2,13 +2,14 @@ import { useMemo, useState, useEffect } from 'react'
 import GameHeader from '../../GameHeader/GameHeader.jsx'
 import GameOver from '../../GameOver/GameOver.jsx'
 import { useLocalStorage } from '../../../hooks/useLocalStorage.js'
+import { buildRanking } from '../../../utils/ranking.js'
 import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './GenericScoreGame.module.css'
 
 const STORAGE_KEY = 'spieleblock_generic'
 
 function emptyState() {
-  return { players: [], rounds: 0, winMode: 'high', targetScore: null }
+  return { players: [], rounds: 0, winMode: 'high', targetScore: null, maxRounds: null }
 }
 
 let nextId = Date.now()
@@ -30,7 +31,8 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
         })),
         rounds: 0,
         winMode: config.winMode || 'high',
-        targetScore: config.targetScore ?? null
+        targetScore: config.targetScore ?? null,
+        maxRounds: config.maxRounds ?? null
       })
     }
   }, [])
@@ -38,30 +40,50 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
   const players = state.players
   const rounds = state.rounds
 
+  const isLow = state.winMode === 'low'
+
   const totals = useMemo(
     () => players.map((p) => p.scores.reduce((a, b) => a + (b || 0), 0)),
     [players]
   )
-  const leaderTotal = totals.length ? Math.max(...totals) : null
+  // Führender je nach Gewinnmodus (niedrigste bzw. höchste Punktzahl)
+  const leaderTotal = totals.length
+    ? (isLow ? Math.min(...totals) : Math.max(...totals))
+    : null
+
+  // Spieler nach Platzierung sortiert (bester zuerst) für die oberen Blöcke
+  const rankedPlayers = useMemo(() => {
+    const withTotals = players.map((p, i) => ({ player: p, total: totals[i] }))
+    return withTotals.sort((a, b) => (isLow ? a.total - b.total : b.total - a.total))
+  }, [players, totals, isLow])
 
   const isGameOver = useMemo(() => {
-    if (!state.targetScore || players.length === 0 || rounds === 0) return false
+    if (players.length === 0 || rounds === 0) return false
     if (focusedCell && focusedCell.roundIdx === rounds - 1) return false
     const allEntered = players.every((p) => p.scores[rounds - 1] !== null)
     if (!allEntered) return false
-    return totals.some((t) => t >= state.targetScore)
-  }, [state.targetScore, totals, players, rounds, focusedCell])
+    const reachedTarget = state.targetScore && totals.some((t) => t >= state.targetScore)
+    const reachedMaxRounds = state.maxRounds && rounds >= state.maxRounds
+    return Boolean(reachedTarget || reachedMaxRounds)
+  }, [state.targetScore, state.maxRounds, totals, players, rounds, focusedCell])
 
   const winner = useMemo(() => {
     if (!isGameOver) return null
-    const isLow = state.winMode === 'low'
     const best = isLow ? Math.min(...totals) : Math.max(...totals)
     const winners = players.filter((_, i) => totals[i] === best)
     if (winners.length > 1) {
       return { name: winners.map((w) => w.name).join(' & '), color: '#FBBF24', score: best, tie: true }
     }
     return { name: winners[0].name, color: winners[0].color, score: best }
-  }, [isGameOver, players, totals, state.winMode])
+  }, [isGameOver, players, totals, isLow])
+
+  const ranking = useMemo(
+    () => buildRanking(
+      players.map((p, i) => ({ name: p.name, color: p.color, score: totals[i] })),
+      isLow
+    ),
+    [players, totals, isLow]
+  )
 
   const removePlayer = (id) =>
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }))
@@ -108,33 +130,32 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
         ) : (
           <>
             <div className={styles.totalsRow}>
-              {players.map((p, i) => (
-                <div key={p.id} className={`${styles.totalCard} glass`}>
-                  <button
-                    className={styles.removeBtn}
-                    onClick={() => removePlayer(p.id)}
-                    aria-label={`${p.name} entfernen`}
-                  >
-                    ✕
-                  </button>
-                  <span className={styles.dot} style={{ background: p.color }} />
-                  <span className={styles.totalName}>{p.name}</span>
-                  <span
-                    className={styles.totalValue}
-                    style={{
-                      color:
-                        leaderTotal !== null && totals[i] === leaderTotal && totals[i] !== 0
-                          ? p.color
-                          : 'var(--text)'
-                    }}
-                  >
-                    {totals[i]}
-                  </span>
-                  {leaderTotal !== null && totals[i] === leaderTotal && totals[i] !== 0 && (
-                    <span className={styles.crown}>👑</span>
-                  )}
-                </div>
-              ))}
+              {rankedPlayers.map(({ player: p, total }) => {
+                const isLeader =
+                  leaderTotal !== null &&
+                  total === leaderTotal &&
+                  totals.some((t) => t !== 0)
+                return (
+                  <div key={p.id} className={`${styles.totalCard} glass`}>
+                    <button
+                      className={styles.removeBtn}
+                      onClick={() => removePlayer(p.id)}
+                      aria-label={`${p.name} entfernen`}
+                    >
+                      ✕
+                    </button>
+                    <span className={styles.dot} style={{ background: p.color }} />
+                    <span className={styles.totalName}>{p.name}</span>
+                    <span
+                      className={styles.totalValue}
+                      style={{ color: isLeader ? p.color : 'var(--text)' }}
+                    >
+                      {total}
+                    </span>
+                    {isLeader && <span className={styles.crown}>👑</span>}
+                  </div>
+                )
+              })}
             </div>
 
             <div
@@ -186,6 +207,7 @@ export default function GenericScoreGame({ config, onBack, onRestart }) {
       {isGameOver && !dismissed && winner && (
         <GameOver
           winner={winner}
+          ranking={ranking}
           onRestart={onRestart}
           onDismiss={() => setDismissed(true)}
         />

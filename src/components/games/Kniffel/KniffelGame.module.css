@@ -252,3 +252,53 @@ button.cell:active { transform: scale(0.92); background: rgba(120, 120, 140, 0.2
   border-radius: 14px;
   background: rgba(255, 69, 58, 0.1);
 }
+
+/* ---------- Mehrfach-Kniffel-Bonus ---------- */
+.bonusBox {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.bonusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bonusTitle {
+  font-size: 16px;
+  font-weight: 700;
+}
+.bonusHint {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+.bonusControls {
+  display: flex;
+  gap: 10px;
+}
+.bonusAdd {
+  flex: 1;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 14px;
+  color: #7c5b00;
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  transition: transform 0.15s var(--spring);
+}
+.bonusAdd:active { transform: scale(0.96); }
+.bonusMinus {
+  width: 54px;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 14px;
+  color: var(--text);
+  background: rgba(120, 120, 140, 0.16);
+  transition: transform 0.15s var(--spring);
+}
+.bonusMinus:active { transform: scale(0.92); }

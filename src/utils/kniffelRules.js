@@ -22,10 +22,19 @@ export const LOWER_FIELDS = [
 export const BONUS_THRESHOLD = 63
 export const BONUS_VALUE = 35
 
+// Wert des regulären Kniffels sowie jedes weiteren (Mehrfach-)Kniffels
+export const KNIFFEL_VALUE = 50
+export const KNIFFEL_BONUS_VALUE = 100
+
+// Alle Spielfelder (ohne Zusatz-Zähler wie kniffelBonus)
+export const ALL_FIELDS = [...UPPER_FIELDS, ...LOWER_FIELDS]
+
 // Ein Score-Eintrag ist entweder null (leer), oder eine Zahl (inkl. 0 = gestrichen)
 export function createScorecard() {
   const card = {}
   for (const f of [...UPPER_FIELDS, ...LOWER_FIELDS]) card[f.key] = null
+  // Zähler für zusätzlich geworfene Kniffel (je +100 Punkte)
+  card.kniffelBonus = 0
   return card
 }
 
@@ -45,8 +54,18 @@ export function lowerSum(card) {
   return LOWER_FIELDS.reduce((sum, f) => sum + (card[f.key] ?? 0), 0)
 }
 
+// Anzahl zusätzlich geworfener Kniffel (Mehrfach-Kniffel)
+export function kniffelBonusCount(card) {
+  return card.kniffelBonus ?? 0
+}
+
+// Gesamtpunkte aus den Mehrfach-Kniffeln
+export function kniffelBonusValue(card) {
+  return kniffelBonusCount(card) * KNIFFEL_BONUS_VALUE
+}
+
 export function grandTotal(card) {
-  return upperSum(card) + bonusValue(card) + lowerSum(card)
+  return upperSum(card) + bonusValue(card) + lowerSum(card) + kniffelBonusValue(card)
 }
 
 // Punkte bis zum Bonus (für Fortschrittsanzeige), kann negativ sein

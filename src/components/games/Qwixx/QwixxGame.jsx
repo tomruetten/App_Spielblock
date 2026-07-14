@@ -11,6 +11,7 @@ import {
   canCheck,
   playerScore
 } from '../../../utils/qwixxRules.js'
+import { buildRanking } from '../../../utils/ranking.js'
 import { PLAYER_COLORS } from '../../../utils/playerColors.js'
 import styles from './QwixxGame.module.css'
 
@@ -75,6 +76,13 @@ export default function QwixxGame({ config, onBack, onRestart }) {
     }
     return { name: winners[0].name, color: winners[0].color, score: best }
   }, [isGameOver, players])
+
+  const ranking = useMemo(
+    () => buildRanking(
+      players.map((p) => ({ name: p.name, color: p.color, score: playerScore(p) }))
+    ),
+    [players]
+  )
 
   const addPlayer = () => {
     const name = newName.trim()
@@ -223,6 +231,7 @@ export default function QwixxGame({ config, onBack, onRestart }) {
       {isGameOver && !dismissed && winner && (
         <GameOver
           winner={winner}
+          ranking={ranking}
           onRestart={onRestart}
           onDismiss={() => setDismissed(true)}
         />

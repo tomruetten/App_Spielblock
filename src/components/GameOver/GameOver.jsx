@@ -6,7 +6,7 @@ const CONF_COLORS = [
   '#F43F5E', '#34D399', '#93C5FD', '#FDE68A',
 ]
 
-export default function GameOver({ winner, onRestart, onDismiss }) {
+export default function GameOver({ winner, ranking, onRestart, onDismiss }) {
   return (
     <div className={styles.overlay}>
       <div className={styles.confetti} aria-hidden="true">
@@ -41,6 +41,19 @@ export default function GameOver({ winner, onRestart, onDismiss }) {
         <p className={styles.label}>{winner.tie ? 'Unentschieden' : 'Gewinner'}</p>
         <h2 className={styles.name} style={{ color: winner.color }}>{winner.name}</h2>
         <p className={styles.score}>{winner.score} Punkte</p>
+
+        {ranking && ranking.length > 1 && (
+          <ol className={styles.ranking}>
+            {ranking.map((r, i) => (
+              <li key={i} className={styles.rankRow}>
+                <span className={styles.rankPos}>{r.rank}.</span>
+                <span className={styles.rankDot} style={{ background: r.color }} />
+                <span className={styles.rankName}>{r.name}</span>
+                <span className={styles.rankScore}>{r.score}</span>
+              </li>
+            ))}
+          </ol>
+        )}
 
         <div className={styles.actions}>
           <button className="btn-primary" onClick={onRestart}>Neues Spiel</button>
