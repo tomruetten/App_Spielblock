@@ -78,12 +78,27 @@ export default function WizardGame({ config, onBack, onRestart }) {
   const removePlayer = (id) =>
     setState((s) => ({ ...s, players: s.players.filter((p) => p.id !== id) }))
 
-  const setRound = (playerId, roundIdx, round) => {
+  const updateRound = (playerId, roundIdx, patch) => {
     setState((s) => ({
       ...s,
       players: s.players.map((p) =>
         p.id === playerId
-          ? { ...p, rounds: p.rounds.map((r, i) => (i === roundIdx ? round : r)) }
+          ? { ...p, rounds: p.rounds.map((r, i) => (i === roundIdx ? { ...r, ...patch } : r)) }
+          : p
+      )
+    }))
+    setEditing(null)
+  }
+
+  const saveBid = (playerId, roundIdx, bid) => updateRound(playerId, roundIdx, { bid })
+  const saveTricks = (playerId, roundIdx, tricks) => updateRound(playerId, roundIdx, { tricks })
+
+  const clearRound = (playerId, roundIdx) => {
+    setState((s) => ({
+      ...s,
+      players: s.players.map((p) =>
+        p.id === playerId
+          ? { ...p, rounds: p.rounds.map((r, i) => (i === roundIdx ? createEmptyRound() : r)) }
           : p
       )
     }))
@@ -93,6 +108,19 @@ export default function WizardGame({ config, onBack, onRestart }) {
   const editingPlayer = editing
     ? players.find((p) => p.id === editing.playerId)
     : null
+
+  // Wie viele Stiche in dieser Runde von den ANDEREN Spielern bereits vergeben
+  // wurden – begrenzt, wie viele diesem Spieler maximal noch bleiben können.
+  let sheetData = null
+  if (editing && editingPlayer) {
+    const round = editingPlayer.rounds[editing.roundIdx]
+    const cardsMax = cardsInRound(editing.roundIdx)
+    const otherTricksSum = players
+      .filter((p) => p.id !== editing.playerId)
+      .reduce((sum, p) => sum + (p.rounds[editing.roundIdx].tricks ?? 0), 0)
+    const maxTricks = Math.max(0, cardsMax - otherTricksSum)
+    sheetData = { round, cardsMax, maxTricks }
+  }
 
   return (
     <div className={styles.screen}>
@@ -149,11 +177,16 @@ export default function WizardGame({ config, onBack, onRestart }) {
                     const round = p.rounds[r]
                     const score = roundScore(round)
                     const entered = isRoundEntered(round)
+                    const pending = round.bid !== null && round.tricks === null
                     const hit = entered && round.bid === round.tricks
                     return (
                       <button
                         key={p.id}
-                        className={`${styles.cell} ${entered ? (hit ? styles.cellHit : styles.cellMiss) : ''}`}
+                        className={`${styles.cell} ${
+                          entered
+                            ? (hit ? styles.cellHit : styles.cellMiss)
+                            : pending ? styles.cellPending : ''
+                        }`}
                         onClick={() => setEditing({ playerId: p.id, roundIdx: r })}
                       >
                         {entered ? (
@@ -162,6 +195,11 @@ export default function WizardGame({ config, onBack, onRestart }) {
                               {score > 0 ? `+${score}` : score}
                             </span>
                             <span className={styles.cellSub}>{round.bid}/{round.tricks}</span>
+                          </>
+                        ) : pending ? (
+                          <>
+                            <span className={styles.cellPendingValue}>{round.bid}</span>
+                            <span className={styles.cellSub}>Ansage</span>
                           </>
                         ) : (
                           <span className={styles.cellEmpty}>–</span>
@@ -176,12 +214,15 @@ export default function WizardGame({ config, onBack, onRestart }) {
         )}
       </div>
 
-      {editing && editingPlayer && (
+      {editing && editingPlayer && sheetData && (
         <RoundSheet
           roundIdx={editing.roundIdx}
-          current={editingPlayer.rounds[editing.roundIdx]}
-          onSave={(round) => setRound(editing.playerId, editing.roundIdx, round)}
-          onClear={() => setRound(editing.playerId, editing.roundIdx, createEmptyRound())}
+          round={sheetData.round}
+          cardsMax={sheetData.cardsMax}
+          maxTricks={sheetData.maxTricks}
+          onSaveBid={(bid) => saveBid(editing.playerId, editing.roundIdx, bid)}
+          onSaveTricks={(tricks) => saveTricks(editing.playerId, editing.roundIdx, tricks)}
+          onClear={() => clearRound(editing.playerId, editing.roundIdx)}
           onClose={() => setEditing(null)}
         />
       )}
@@ -240,11 +281,7 @@ function NumberPicker({ label, value, max, onChange }) {
   )
 }
 
-function RoundSheet({ roundIdx, current, onSave, onClear, onClose }) {
-  const max = cardsInRound(roundIdx)
-  const [bid, setBid] = useState(current?.bid ?? null)
-  const [tricks, setTricks] = useState(current?.tricks ?? null)
-
+function SheetShell({ title, hint, onClose, children }) {
   // Body-Scroll sperren, solange das Sheet offen ist
   useEffect(() => {
     const prevOverflow = document.body.style.overflow
@@ -252,48 +289,113 @@ function RoundSheet({ roundIdx, current, onSave, onClear, onClose }) {
     return () => { document.body.style.overflow = prevOverflow }
   }, [])
 
-  const previewScore =
-    bid !== null && tricks !== null
-      ? (bid === tricks ? 20 + 10 * tricks : -10 * Math.abs(bid - tricks))
-      : null
-
-  const canSave = bid !== null && tricks !== null
-  const hasEntry = current !== null && current !== undefined && current.bid !== null
-
   return (
     <div className={styles.sheetBackdrop} onClick={onClose}>
       <div className={`${styles.sheet} glass`} onClick={(e) => e.stopPropagation()}>
         <div className={styles.sheetHandle} />
-        <h3 className={styles.sheetTitle}>Runde {roundIdx + 1}</h3>
-        <p className={styles.sheetHint}>{max} {max === 1 ? 'Karte' : 'Karten'}</p>
+        <h3 className={styles.sheetTitle}>{title}</h3>
+        {hint && <p className={styles.sheetHint}>{hint}</p>}
+        {children}
+      </div>
+    </div>
+  )
+}
 
-        <NumberPicker label="Ansage" value={bid} max={max} onChange={setBid} />
-        <NumberPicker label="Stiche" value={tricks} max={max} onChange={setTricks} />
+function RoundSheet({ roundIdx, round, cardsMax, maxTricks, onSaveBid, onSaveTricks, onClear, onClose }) {
+  // Ablauf wie im echten Spiel: zuerst alle Ansagen, danach die Stiche.
+  const initialStage = round.bid === null ? 'bid' : (round.tricks === null ? 'tricks' : 'summary')
+  const [stage, setStage] = useState(initialStage)
+  const [bid, setBid] = useState(round.bid)
+  const [tricks, setTricks] = useState(round.tricks)
 
-        {previewScore !== null && (
-          <p
-            className={`${styles.previewScore} ${
-              previewScore >= 0 ? styles.previewPositive : styles.previewNegative
-            }`}
-          >
-            {previewScore >= 0 ? `+${previewScore}` : previewScore} Punkte
+  const cardLabel = `${cardsMax} ${cardsMax === 1 ? 'Karte' : 'Karten'}`
+  const title = `Runde ${roundIdx + 1}`
+
+  if (stage === 'bid') {
+    return (
+      <SheetShell title={title} hint={cardLabel} onClose={onClose}>
+        <NumberPicker label="Ansage" value={bid} max={cardsMax} onChange={setBid} />
+        <button
+          className={styles.saveBtn}
+          disabled={bid === null}
+          onClick={() => onSaveBid(bid)}
+        >
+          Ansage speichern
+        </button>
+        {round.bid !== null && (
+          <button className={styles.clearBtn} onClick={onClear}>
+            Eintrag löschen
+          </button>
+        )}
+      </SheetShell>
+    )
+  }
+
+  if (stage === 'tricks') {
+    return (
+      <SheetShell title={title} hint={cardLabel} onClose={onClose}>
+        <div className={styles.bidSummary}>
+          <span className={styles.bidSummaryLabel}>Ansage</span>
+          <strong className={styles.bidSummaryValue}>{round.bid}</strong>
+          <button className={styles.editLink} onClick={() => setStage('bid')}>
+            ändern
+          </button>
+        </div>
+
+        <NumberPicker label="Stiche" value={tricks} max={maxTricks} onChange={setTricks} />
+        {maxTricks < cardsMax && (
+          <p className={styles.capHint}>
+            Noch max. {maxTricks} {maxTricks === 1 ? 'Stich' : 'Stiche'} möglich – der Rest ist
+            bereits an andere Spieler vergeben.
           </p>
         )}
 
         <button
           className={styles.saveBtn}
-          disabled={!canSave}
-          onClick={() => onSave({ bid, tricks })}
+          disabled={tricks === null}
+          onClick={() => onSaveTricks(tricks)}
         >
-          Speichern
+          Stiche speichern
         </button>
+      </SheetShell>
+    )
+  }
 
-        {hasEntry && (
-          <button className={styles.clearBtn} onClick={onClear}>
-            Eintrag löschen
-          </button>
-        )}
+  // stage === 'summary'
+  const score = roundScore(round)
+  return (
+    <SheetShell title={title} hint={cardLabel} onClose={onClose}>
+      <div className={styles.summaryGrid}>
+        <div className={styles.summaryItem}>
+          <span className={styles.summaryLabel}>Ansage</span>
+          <span className={styles.summaryValue}>{round.bid}</span>
+        </div>
+        <div className={styles.summaryItem}>
+          <span className={styles.summaryLabel}>Stiche</span>
+          <span className={styles.summaryValue}>{round.tricks}</span>
+        </div>
       </div>
-    </div>
+
+      <p
+        className={`${styles.previewScore} ${
+          score >= 0 ? styles.previewPositive : styles.previewNegative
+        }`}
+      >
+        {score >= 0 ? `+${score}` : score} Punkte
+      </p>
+
+      <div className={styles.summaryActions}>
+        <button className={styles.stageBtn} onClick={() => setStage('bid')}>
+          Ansage ändern
+        </button>
+        <button className={styles.stageBtn} onClick={() => setStage('tricks')}>
+          Stiche ändern
+        </button>
+      </div>
+
+      <button className={styles.clearBtn} onClick={onClear}>
+        Eintrag löschen
+      </button>
+    </SheetShell>
   )
 }
