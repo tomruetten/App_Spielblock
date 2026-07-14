@@ -91,6 +91,13 @@
   background: rgba(108, 60, 225, 0.2);
 }
 
+.hintText {
+  font-size: 13px;
+  color: var(--text-soft);
+  padding: 2px 2px 0;
+  line-height: 1.4;
+}
+
 .options {
   display: flex;
   flex-direction: column;

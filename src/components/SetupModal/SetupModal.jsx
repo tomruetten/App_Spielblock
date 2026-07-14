@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { totalRounds } from '../../utils/wizardRules.js'
 import styles from './SetupModal.module.css'
 
 export default function SetupModal({
@@ -68,6 +69,19 @@ export default function SetupModal({
         <button onClick={addPlayer} className={styles.addBtn}>
           + Spieler hinzufügen
         </button>
+
+        {gameType === 'wizard' && (
+          <p className={styles.hintText}>
+            Wizard wird mit 3–6 Spielern gespielt.
+            {' '}
+            {(() => {
+              const count = players.filter((p) => p.trim()).length
+              return count >= 2
+                ? `Bei ${count} Spielern: ${totalRounds(count)} Runden.`
+                : ''
+            })()}
+          </p>
+        )}
 
         {gameType === 'generic' && (
           <div className={styles.options}>

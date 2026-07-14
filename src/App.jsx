@@ -4,17 +4,20 @@ import SetupModal from './components/SetupModal/SetupModal.jsx'
 import GenericScoreGame from './components/games/GenericScore/GenericScoreGame.jsx'
 import KniffelGame from './components/games/Kniffel/KniffelGame.jsx'
 import QwixxGame from './components/games/Qwixx/QwixxGame.jsx'
+import WizardGame from './components/games/Wizard/WizardGame.jsx'
 
 const GAMES = {
   generic: GenericScoreGame,
   kniffel: KniffelGame,
-  qwixx: QwixxGame
+  qwixx: QwixxGame,
+  wizard: WizardGame
 }
 
 const STORAGE_KEYS = {
   generic: 'spieleblock_generic',
   kniffel: 'spieleblock_kniffel',
-  qwixx: 'spieleblock_qwixx'
+  qwixx: 'spieleblock_qwixx',
+  wizard: 'spieleblock_wizard'
 }
 
 function hasExistingGame(gameType) {
