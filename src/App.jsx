@@ -5,19 +5,22 @@ import GenericScoreGame from './components/games/GenericScore/GenericScoreGame.j
 import KniffelGame from './components/games/Kniffel/KniffelGame.jsx'
 import QwixxGame from './components/games/Qwixx/QwixxGame.jsx'
 import WizardGame from './components/games/Wizard/WizardGame.jsx'
+import Phase10Game from './components/games/Phase10/Phase10Game.jsx'
 
 const GAMES = {
   generic: GenericScoreGame,
   kniffel: KniffelGame,
   qwixx: QwixxGame,
-  wizard: WizardGame
+  wizard: WizardGame,
+  phase10: Phase10Game
 }
 
 const STORAGE_KEYS = {
   generic: 'spieleblock_generic',
   kniffel: 'spieleblock_kniffel',
   qwixx: 'spieleblock_qwixx',
-  wizard: 'spieleblock_wizard'
+  wizard: 'spieleblock_wizard',
+  phase10: 'spieleblock_phase10'
 }
 
 function hasExistingGame(gameType) {
