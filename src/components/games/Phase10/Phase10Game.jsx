@@ -218,7 +218,7 @@ function ValueSheet({ player, phaseIdx, finalRound, onSave, onClear, onGiveUp, o
                 inputMode="numeric"
                 autoFocus
                 value={manual}
-                placeholder="Punkte (Würfelsumme)"
+                placeholder="Punkte"
                 onChange={(e) => setManual(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && submitManual()}
               />
