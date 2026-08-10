@@ -83,6 +83,14 @@ export default function SetupModal({
           </p>
         )}
 
+        {gameType === 'phase10' && (
+          <p className={styles.hintText}>
+            Phase 10 wird mit 2–6 Spielern gespielt. Jeder Spieler arbeitet sich
+            durch 10 Phasen – wer zuerst durch ist und am Ende die meisten
+            Punkte hat, gewinnt.
+          </p>
+        )}
+
         {gameType === 'generic' && (
           <div className={styles.options}>
             <div className={styles.optionGroup}>
