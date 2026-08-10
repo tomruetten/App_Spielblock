@@ -52,8 +52,8 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
       {PHASES.map((phase, idx) => (
         <div className={styles.row} key={phase.number} style={gridStyle}>
           <div className={styles.rowLabel}>
-            <span className={styles.rowName}>Phase {phase.number} · {phase.label}</span>
-            <span className={styles.rowHint}>{phase.hint}</span>
+            <span className={styles.phaseBadge}>{phase.number}</span>
+            <span className={styles.rowName}>{phase.label}</span>
           </div>
           {players.map((p) => (
             <Cell
