@@ -52,14 +52,14 @@ export default function Phase10Game({ config, onBack, onRestart }) {
 
   const ranking = useMemo(
     () => buildRanking(
-      players.map((p) => ({ name: p.name, color: p.color, score: grandTotal(p.card) }))
+      players.map((p) => ({ name: p.name, color: p.color, score: grandTotal(p) }))
     ),
     [players]
   )
 
   const winner = useMemo(() => {
     if (!isGameOver) return null
-    const scores = players.map((p) => grandTotal(p.card))
+    const scores = players.map((p) => grandTotal(p))
     const best = Math.max(...scores)
     const winners = players.filter((_, i) => scores[i] === best)
     if (winners.length > 1) {
@@ -197,7 +197,7 @@ function ValueSheet({ player, phaseIdx, finalRound, onSave, onClear, onGiveUp, o
       >
         <div className={styles.sheetHandle} />
         <h3 className={styles.sheetTitle}>Phase {phase.number} · {phase.label}</h3>
-        <p className={styles.sheetHint}>{phase.hint}</p>
+        <p className={styles.sheetHint}>Maximal {phase.maxPoints} Punkte</p>
 
         {isGaveUpCell ? (
           <>

@@ -1,4 +1,15 @@
-import { PHASES, currentPhaseIndex, isCardComplete, grandTotal } from '../../../utils/phase10Rules.js'
+import { Fragment } from 'react'
+import {
+  PHASES,
+  PHASE5_BONUS_THRESHOLD,
+  PHASE5_BONUS_VALUE,
+  PHASE10_BONUS_VALUE,
+  currentPhaseIndex,
+  isCardComplete,
+  phase5BonusStatus,
+  phase10BonusStatus,
+  grandTotal
+} from '../../../utils/phase10Rules.js'
 import styles from './Phase10Game.module.css'
 
 function Cell({ state, value, onTap, color }) {
@@ -16,6 +27,17 @@ function Cell({ state, value, onTap, color }) {
       {state === 'locked' && '🔒'}
       {state === 'gaveUp' && '🚫'}
     </button>
+  )
+}
+
+function BonusCell({ status, value }) {
+  const label = status === 'earned' ? `+${value}` : status === 'missed' ? '0' : '–'
+  return (
+    <div
+      className={`${styles.cell} ${styles.summaryCell} ${status === 'earned' ? styles.bonusEarned : ''}`}
+    >
+      {label}
+    </div>
   )
 }
 
@@ -50,21 +72,56 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
       </div>
 
       {PHASES.map((phase, idx) => (
-        <div className={styles.row} key={phase.number} style={gridStyle}>
-          <div className={styles.rowLabel}>
-            <span className={styles.phaseBadge}>{phase.number}</span>
-            <span className={styles.rowName}>{phase.label}</span>
+        <Fragment key={phase.number}>
+          <div className={styles.row} style={gridStyle}>
+            <div className={styles.rowLabel}>
+              <span className={styles.phaseBadge}>{phase.number}</span>
+              <div className={styles.rowText}>
+                <span className={styles.rowName}>{phase.label}</span>
+                <span className={styles.rowMax}>max. {phase.maxPoints}</span>
+              </div>
+            </div>
+            {players.map((p) => (
+              <Cell
+                key={p.id}
+                state={cellStateFor(p, idx)}
+                value={p.card[idx]}
+                onTap={() => onCellTap(p.id, idx)}
+                color={p.color}
+              />
+            ))}
           </div>
-          {players.map((p) => (
-            <Cell
-              key={p.id}
-              state={cellStateFor(p, idx)}
-              value={p.card[idx]}
-              onTap={() => onCellTap(p.id, idx)}
-              color={p.color}
-            />
-          ))}
-        </div>
+
+          {phase.number === 5 && (
+            <div className={`${styles.row} ${styles.bonusRow}`} style={gridStyle}>
+              <div className={styles.rowLabel}>
+                <span className={styles.bonusIcon}>🎁</span>
+                <div className={styles.rowText}>
+                  <span className={styles.rowName}>Bonus ab {PHASE5_BONUS_THRESHOLD} Punkten</span>
+                  <span className={styles.rowMax}>nach Phase 5 · +{PHASE5_BONUS_VALUE}</span>
+                </div>
+              </div>
+              {players.map((p) => (
+                <BonusCell key={p.id} status={phase5BonusStatus(p.card)} value={PHASE5_BONUS_VALUE} />
+              ))}
+            </div>
+          )}
+
+          {phase.number === 10 && (
+            <div className={`${styles.row} ${styles.bonusRow}`} style={gridStyle}>
+              <div className={styles.rowLabel}>
+                <span className={styles.bonusIcon}>🏆</span>
+                <div className={styles.rowText}>
+                  <span className={styles.rowName}>Bonus: alle 10 Phasen</span>
+                  <span className={styles.rowMax}>bei Abschluss · +{PHASE10_BONUS_VALUE}</span>
+                </div>
+              </div>
+              {players.map((p) => (
+                <BonusCell key={p.id} status={phase10BonusStatus(p)} value={PHASE10_BONUS_VALUE} />
+              ))}
+            </div>
+          )}
+        </Fragment>
       ))}
 
       <div className={`${styles.row} ${styles.summaryRow}`} style={gridStyle}>
@@ -76,7 +133,7 @@ export default function ScoreSheet({ players, onCellTap, onRemovePlayer }) {
             key={p.id}
             className={`${styles.cell} ${styles.summaryCell} ${styles.summaryAccent}`}
           >
-            {grandTotal(p.card)}
+            {grandTotal(p)}
           </div>
         ))}
       </div>
